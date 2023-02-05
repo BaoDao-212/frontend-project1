@@ -1,0 +1,22 @@
+query XemDanhSachTamTru($input: XemDanhSachTamTruInput!) {
+  xemDanhSachTamTru(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    paginationOutput {
+      totalPages
+      totalResults
+    }
+    tamTru {
+      id
+      createdAt
+      updatedAt
+      nguoiTamTru{
+        ...UserFragment
+      }
+      noiTamTruHienTai
+    }
+  }
+}

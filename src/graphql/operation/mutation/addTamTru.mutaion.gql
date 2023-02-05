@@ -1,0 +1,9 @@
+mutation AddTamTru($input: AddTamTruInput!) {
+  addTamTru(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+  }
+}
