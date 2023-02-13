@@ -1,9 +1,0 @@
-mutation CapNhatHoKhau($input: CapNhatHoKhauInput!) {
-  capNhatHoKhau(input: $input) {
-    ok
-    error {
-      mainReason
-      message
-    }
-  }
-}

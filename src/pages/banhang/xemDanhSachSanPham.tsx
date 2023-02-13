@@ -1,53 +1,50 @@
+import { UserCircleIcon } from "@heroicons/react/outline";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 import { toast } from "react-toastify";
-import TextSearchInput from "../../../components/form/TextSearchInput";
-import Loading from "../../../components/Loading";
-import PaginationNav from "../../../components/PaginationNav";
+import TextSearchInput from "../../components/form/TextSearchInput";
+import Loading from "../../components/Loading";
 import {
-  LoaiPhi,
-  useDanhSachKhoanPhiLazyQuery,
-} from "../../../graphql/generated/schema";
-import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
+  LoaiSanPham,
+  useDanhSachSanPhamLazyQuery,
+} from "../../graphql/generated/schema";
+import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
+
 type ByState = {
-  tenKhoanPhi?: string;
-  loaiPhi?: LoaiPhi;
+  ten?: string;
 };
 
 type Props = {};
-const DanhSachKhoanPhi = (props: Props) => {
+const DanhSachSanPham = (props: Props) => {
   const navigate = useNavigate();
-  const [getKhoanPhis, { data: userData, loading }] =
-    useDanhSachKhoanPhiLazyQuery({
-      onCompleted(data) {
-        const { XemDanhSachKhoanPhiChoNguoiQuanLi } = data;
-        if (XemDanhSachKhoanPhiChoNguoiQuanLi.error) {
-          toast.error(XemDanhSachKhoanPhiChoNguoiQuanLi.error.message);
-          return;
-        }
-      },
-      onError(err) {
-        const msg = getApolloErrorMessage(err);
-        if (msg) {
-          toast.error(msg);
-          return;
-        }
-        toast.error("Lỗi xảy ra, thử lại sau");
-      },
-    });
+  const [getSanPhams, { data: spData, loading }] = useDanhSachSanPhamLazyQuery({
+    onCompleted(data) {
+      const { xemDanhSachSanPham } = data;
+      if (xemDanhSachSanPham.error) {
+        toast.error(xemDanhSachSanPham.error.message);
+        return;
+      }
+    },
+    onError(err) {
+      const msg = getApolloErrorMessage(err);
+      if (msg) {
+        toast.error(msg);
+        return;
+      }
+      toast.error("Lỗi xảy ra, thử lại sau");
+    },
+  });
   const [byState, setByState] = useState<ByState>({
-    tenKhoanPhi: undefined,
-    loaiPhi: undefined,
+    ten: undefined,
   });
   const [page, setPage] = useState<number>(1);
   useEffect(() => {
-    let { tenKhoanPhi, loaiPhi } = byState;
-    getKhoanPhis({
+    let { ten } = byState;
+    getSanPhams({
       variables: {
         input: {
-          tenKhoanPhi,
-          loaiPhi,
+          tenSanPham: ten,
           paginationInput: {
             page,
             resultsPerPage: 16,
@@ -56,58 +53,48 @@ const DanhSachKhoanPhi = (props: Props) => {
       },
     });
   }, [byState, page]);
-  const khoanPhi = userData?.XemDanhSachKhoanPhiChoNguoiQuanLi.khoanPhi;
+  const sanPhams = spData?.xemDanhSachSanPham.sanPhams;
   const columns = useMemo(() => {
     return [
       {
-        Header: "Id",
+        Header: "Tên sản phẩm",
         // @ts-ignore
-        accessor: (row) => row["id"],
-      },
-      {
-        Header: "Tên khoản phí",
+        accessor: (row) => row,
         // @ts-ignore
-        accessor: (row) => row["tenKhoanPhi"],
-        // @ts-ignore
-      },
-      {
-        Header: "Ngày phát động",
-        // @ts-ignore
-        accessor: (row) =>
-          new Date(row["ngayPhatDong"]).toLocaleDateString("vi", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          }),
-      },
-      {
-        Header: "Ngày hết hạn",
-        // @ts-ignore
-        accessor: (row) =>
-          new Date(row["ngayHetHan"]).toLocaleDateString("vi", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          }),
-      },
-      {
-        Header: "Theo hộ khẩu",
-        // @ts-ignore
-        accessor: (row) => {
-          return row["theoHoKhau"] ? "Có" : "Không";
+        Cell: (row) => {
+          const data = row["row"]["original"];
+          return (
+            <div className="flex space-x-2 items-center">
+              {data["avatar"] && (
+                <img
+                  className="w-8 h-8 rounded-full object-center"
+                  src={data["avatar"]["fileUrl"]}
+                  alt="image"
+                />
+              )}
+              {!data["avatar"] && (
+                <UserCircleIcon className="w-8 h-8 rounded-full object-center" />
+              )}
+              <h1>{data["ten"]}</h1>
+            </div>
+          );
         },
       },
       {
-        Header: "Loại phí",
+        Header: "Giá",
         // @ts-ignore
         accessor: (row) => {
-          return row["loaiPhi"] == LoaiPhi.BatBuoc ? "Bắt buộc" : "Ủng hộ";
+          return row["soTien"];
         },
       },
       {
-        Header: "Số tiền(VNĐ)",
+        Header: "Loại sản phẩm",
         // @ts-ignore
-        accessor: (row) => row["soTien"],
+        accessor: (row) => {
+          return row["loaiSanPham"] == LoaiSanPham.DoNgot
+            ? "Đồ ngọt"
+            : "Nước uống";
+        },
       },
       {
         Header: "Hành động",
@@ -120,7 +107,7 @@ const DanhSachKhoanPhi = (props: Props) => {
             <div className="space-x-2">
               <button
                 onClick={() => {
-                  navigate(`/account/khoanphi/${data["id"]}`);
+                  navigate(`/manager/sp/detail/${data["id"]}`);
                 }}
                 className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
               >
@@ -128,10 +115,7 @@ const DanhSachKhoanPhi = (props: Props) => {
               </button>
               <button
                 onClick={() => {
-                  if (data["loaiPhi"] == LoaiPhi.UngHo)
-                    navigate(`/account/add/${data["id"]}`);
-                  if (data["loaiPhi"] == LoaiPhi.BatBuoc)
-                    navigate(`/account/edit/${data["id"]}`);
+                  navigate(`/manager/sp/edit/${data["id"]}`);
                 }}
                 className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
               >
@@ -143,10 +127,10 @@ const DanhSachKhoanPhi = (props: Props) => {
       },
     ];
   }, []);
-  const data = useMemo(() => khoanPhi || [], [khoanPhi]);
+  const data = useMemo(() => sanPhams || [], [sanPhams]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ data, columns });
-  console.log(userData);
+  console.log(spData);
   return (
     <Fragment>
       <main className="flex-1 mb-8">
@@ -154,13 +138,13 @@ const DanhSachKhoanPhi = (props: Props) => {
         <div className="border-b border-gray-200 mt-4 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
-              Quản lí khoản phí
+              Quản lí sản phẩm
             </h1>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 flex space-x-3">
             <TextSearchInput
-              labelText="Tên khoản phí"
-              setText={(v) => setByState((pre) => ({ ...pre, tenKhoanPhi: v }))}
+              labelText="Tên sản phẩm"
+              setText={(v) => setByState((pre) => ({ ...pre, ten: v }))}
             />
             <button
               onClick={() => navigate("/account/add")}
@@ -171,7 +155,7 @@ const DanhSachKhoanPhi = (props: Props) => {
           </div>
         </div>
         {loading && <Loading />}
-        {!loading && userData && (
+        {!loading && spData && (
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
@@ -218,14 +202,6 @@ const DanhSachKhoanPhi = (props: Props) => {
                     </tbody>
                   </table>
                 </div>
-                <PaginationNav
-                  currentPage={page}
-                  setCurrentPage={setPage}
-                  totalPage={
-                    userData.XemDanhSachKhoanPhiChoNguoiQuanLi.paginationOutput
-                      ?.totalPages!
-                  }
-                />
               </div>
             </div>
           </div>
@@ -235,4 +211,4 @@ const DanhSachKhoanPhi = (props: Props) => {
   );
 };
 
-export default DanhSachKhoanPhi;
+export default DanhSachSanPham;

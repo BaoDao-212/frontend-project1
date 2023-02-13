@@ -1,0 +1,9 @@
+fragment VoucherFragment on MaGiamGia {
+  id
+  codeVoucher
+  minAmount
+  voucherAmount
+  startDate
+  endDate
+  typeDiscount
+}

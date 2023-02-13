@@ -16,33 +16,9 @@ import DesktopSidebar from "../components/pages/managerPage/DesktopSidebar";
 
 const navigation = [
   {
-    routes: ["/manager"],
-    name: "Thống kê",
-    icon: ChartSquareBarIcon,
-    current: false,
-  },
-  {
     routes: ["/manager/users", RegExp("^/manager/users/*")],
     name: "Quản lí người dùng",
     icon: UserGroupIcon,
-    current: false,
-  },
-  {
-    routes: ["/manager/hokhau", RegExp("^/manager/hokhau/*")],
-    name: "Quản lí hộ khẩu",
-    icon: BookOpenIcon,
-    current: false,
-  },
-  {
-    routes: ["/manager/tamtru", RegExp("^/manager/tamtru/*")],
-    name: "Quản lí tạm trú",
-    icon: IdentificationIcon,
-    current: false,
-  },
-  {
-    routes: ["/manager/tamvang", RegExp("^/manager/tamvang/*")],
-    name: "Quản lí tạm vắng",
-    icon: IdentificationIcon,
     current: false,
   },
   {
@@ -69,7 +45,7 @@ const ManagerLayout = (props: Props) => {
   useEffect(() => {
     if (
       user &&
-      ![VaitroNguoiDung.ToTruong, VaitroNguoiDung.ToPho].includes(
+      ![VaitroNguoiDung.Admin, VaitroNguoiDung.QuanLy].includes(
         user.vaiTroNguoiDung
       )
     )

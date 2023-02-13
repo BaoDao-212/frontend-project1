@@ -1,0 +1,9 @@
+mutation ThemSanPham($input: AddSanPhamInput!) {
+  addSanPham(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+  }
+}

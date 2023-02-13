@@ -10,12 +10,12 @@ import LoadingButton from "../../components/form/LoadingButton";
 import { useRegisterMutation } from "../../graphql/generated/schema";
 import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
 interface SignUpInputForm {
-  canCuocCongDan: string;
+  soDienThoai: string;
   matKhau: string;
   matKhauLapLai: string;
 }
 const signupInputSchema = yup.object().shape({
-  canCuocCongDan: yup.string().required("Cần điền căn cước công dân"),
+  soDienThoai: yup.string().required("Cần điền số điện thoại"),
   matKhau: yup.string().required("Cần điền mật khẩu"),
   matKhauLapLai: yup.string().required("Cần điền xác nhận mật khẩu"),
 });
@@ -34,10 +34,10 @@ export default function RegisterPage() {
   const [registerUser, { loading }] = useRegisterMutation();
   const signupFormProps: FormInputProps[] = [
     {
-      id: "canCuocCongDan",
-      labelText: "Căn cước công dân",
-      errorMessage: errors.canCuocCongDan?.message,
-      registerReturn: register("canCuocCongDan"),
+      id: "soDienThoai",
+      labelText: "Số điện thoại",
+      errorMessage: errors.soDienThoai?.message,
+      registerReturn: register("soDienThoai"),
       type: "text",
     },
     {
@@ -60,11 +60,11 @@ export default function RegisterPage() {
       setError("matKhauLapLai", { message: "Mật khẩu xác nhận không đúng" });
       return;
     }
-    const { canCuocCongDan, matKhau, matKhauLapLai } = data;
+    const { soDienThoai, matKhau, matKhauLapLai } = data;
     registerUser({
       variables: {
         input: {
-          canCuocCongDan,
+          soDienThoai,
           matKhau,
           matKhauLapLai,
         },

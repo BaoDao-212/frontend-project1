@@ -1,0 +1,12 @@
+query SanPhamDetails($input: XemThongTinSanPhamInput!) {
+  xemThongTinSanPham(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    sanpham {
+      ...SanPhamFragment
+    }
+  }
+}

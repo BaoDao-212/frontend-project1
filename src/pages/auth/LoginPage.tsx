@@ -20,12 +20,12 @@ import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
 
 type Props = {};
 type LoginInputForm = {
-  canCuocCongDan: string;
+  soDienThoai: string;
   matKhau: string;
   ghiNhoDangNhap: boolean;
 };
 const loginInputSchema = yup.object().shape({
-  canCuocCongDan: yup.string().required("Cần điền căn cước công dân"),
+  soDienThoai: yup.string().required("Cần điền số điện thoại"),
   matKhau: yup.string().required("Cần điền mật khẩu"),
 });
 const LoginPage = (props: Props) => {
@@ -68,10 +68,10 @@ const LoginPage = (props: Props) => {
   });
   const loginFormProps: FormInputProps[] = [
     {
-      id: "canCuocCongDan",
-      labelText: "Căn cước công dân",
-      errorMessage: errors.canCuocCongDan?.message,
-      registerReturn: register("canCuocCongDan"),
+      id: "soDienThoai",
+      labelText: "Số điện thoại",
+      errorMessage: errors.soDienThoai?.message,
+      registerReturn: register("soDienThoai"),
       type: "text",
     },
     {
@@ -83,11 +83,11 @@ const LoginPage = (props: Props) => {
     },
   ];
   const submitHandler = (data: LoginInputForm) => {
-    const { canCuocCongDan, matKhau } = data;
+    const { soDienThoai, matKhau } = data;
     login({
       variables: {
         input: {
-          canCuocCongDan,
+          soDienThoai,
           matKhau,
         },
       },

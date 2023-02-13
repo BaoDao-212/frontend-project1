@@ -1,9 +1,0 @@
-mutation suaThongTinTamTru($input: SuaThongTinTamTruInput!) {
-  suaThongTinTamTru(input: $input) {
-    ok
-    error {
-      mainReason
-      message
-    }
-  }
-}

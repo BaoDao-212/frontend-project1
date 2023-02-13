@@ -35,7 +35,7 @@ const SelectInput2: FC<{
             </option>
           ))}
         </select>
-        <span>{errorMessage}</span>
+        {/* <span>{errorMessage}</span> */}
       </div>
     </div>
   );

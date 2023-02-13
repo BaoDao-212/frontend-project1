@@ -1,0 +1,14 @@
+fragment SanPhamFragment on SanPham {
+  id
+  avatar {
+    fileUrl
+    filePath
+  }
+  ten
+  loaiSanPham
+  ngayTao
+  soTien
+  moTaSanPham
+  ghiChu
+  
+}

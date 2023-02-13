@@ -1,9 +1,0 @@
-mutation HetTamTru($input: HetTamTruInput!) {
-  hetTamTru(input: $input) {
-    ok
-    error {
-      mainReason
-      message
-    }
-  }
-}

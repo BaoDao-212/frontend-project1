@@ -1,0 +1,9 @@
+mutation EditSanPham($input: EditSanPhamInput!) {
+  editSanPham(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+  }
+}

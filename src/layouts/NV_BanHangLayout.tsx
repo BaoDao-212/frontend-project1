@@ -1,26 +1,30 @@
-import { ChartPieIcon, MenuAlt1Icon } from "@heroicons/react/outline";
-import { BookOpenIcon, KeyIcon, UserCircleIcon } from "@heroicons/react/solid";
-import { cloneDeep } from "lodash";
+import { useReactiveVar } from "@apollo/client";
 import { Fragment, SVGProps, useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { userVar } from "../apollo/reactiveVar/loginStatusVar";
+import { VaitroNguoiDung } from "../graphql/generated/schema";
+
+import { MenuAlt1Icon, UserGroupIcon } from "@heroicons/react/outline";
+import {
+  BookOpenIcon,
+  ChartSquareBarIcon,
+  IdentificationIcon,
+  UserCircleIcon,
+} from "@heroicons/react/solid";
+import { cloneDeep } from "lodash";
 import DesktopSidebar from "../components/pages/managerPage/DesktopSidebar";
+
 const navigation = [
   {
-    routes: ["/thongtin"],
-    name: "Thông tin cá nhân",
+    routes: ["/manager/nv", RegExp("^/manager/nv/*")],
+    name: "Quản lí bán hàng",
+    icon: UserGroupIcon,
+    current: false,
+  },
+  {
+    routes: ["/"],
+    name: "Cá nhân",
     icon: UserCircleIcon,
-    current: false,
-  },
-  {
-    routes: ["/changepassword"],
-    name: "Thay đổi mật khẩu",
-    icon: KeyIcon,
-    current: false,
-  },
-  {
-    routes: ["/manager"],
-    name: "Quản lý quản lý",
-    icon: KeyIcon,
     current: false,
   },
 ];
@@ -32,10 +36,21 @@ export type NavState = {
   current: boolean;
 };
 type Props = {};
-const NormalUserLayout = (props: Props) => {
-  const [navState, setNavState] = useState<NavState[]>(navigation);
+const NVBanHangLayout = (props: Props) => {
+  const navigate = useNavigate();
   const location = useLocation();
+  const [navState, setNavState] = useState<NavState[]>(navigation);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const user = useReactiveVar(userVar);
+  useEffect(() => {
+    if (
+      user &&
+      ![VaitroNguoiDung.Admin, VaitroNguoiDung.QuanLy].includes(
+        user.vaiTroNguoiDung
+      )
+    )
+      navigate("/");
+  }, [user]);
   useEffect(() => {
     const index = navState.findIndex((s) =>
       s.routes
@@ -75,4 +90,4 @@ const NormalUserLayout = (props: Props) => {
   );
 };
 
-export default NormalUserLayout;
+export default NVBanHangLayout;

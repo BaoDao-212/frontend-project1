@@ -1,0 +1,12 @@
+query DanhSachSanPham($input: XemDanhSachSanPhamInput!) {
+  xemDanhSachSanPham(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    sanPhams {
+      ...SanPhamFragment
+    }
+  }
+}

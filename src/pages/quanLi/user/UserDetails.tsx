@@ -80,20 +80,7 @@ const UserDetails: FC<Props> = () => {
             </div>
             <div className="col-span-8 shadow-md rounded-sm">
               {[
-                ["Căn cước công dân", user.canCuocCongDan],
                 ["Họ tên", user.ten],
-                ["Bí danh", user.biDanh],
-                ["Giới tính", user.gioiTinh],
-                ["Ngày sinh", user.ngaySinh],
-                ["Nơi sinh", user.noiSinh],
-                ["Quê quán", user.queQuan],
-                ["Nghề nghiệp", user.ngheNghiep],
-                ["Nơi thường trú trước đó", user.noiThuongTruTruocDo],
-                ["Ngày đăng kí thường trú", user.ngayDangKiThuongTru],
-                ["Nghề nghiệp", user.ngheNghiep],
-                ["Nơi làm việc", user.noiLamViec],
-                ["Dân tộc", user.danToc],
-                ["Ghi chú", user.ghiChu],
                 ["Số điện thoại", user.soDienThoai],
               ].map(([title, value], i) => {
                 let gray = true;

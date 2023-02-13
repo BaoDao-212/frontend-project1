@@ -1,0 +1,12 @@
+query DanhSachVoucher($input: XemDanhSachMaGiamGiaInput!) {
+  xemDanhSachMaGiamGia(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    maGiamGias {
+      ...VoucherFragment
+    }
+  }
+}

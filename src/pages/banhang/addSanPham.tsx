@@ -5,30 +5,31 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { FormInput } from "../../../components/form/FormInput";
-import LoadingButton from "../../../components/form/LoadingButton";
-import { SERVER_URL } from "../../../config";
+import { FormInput } from "../../components/form/FormInput";
+import LoadingButton from "../../components/form/LoadingButton";
+import SelectInput2 from "../../components/form/SelectInput2";
+import { SERVER_URL } from "../../config";
 import {
+  LoaiSanPham,
   StoredFileInputType,
-  useAddUserMutation,
-} from "../../../graphql/generated/schema";
-import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
+  useThemSanPhamMutation,
+} from "../../graphql/generated/schema";
+import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
 
-type AddUserInputForm = {
-  soDienThoai: string;
+type AddSanPhamInputForm = {
   ten: string;
-  gioiTinh: string;
-  ghiChu?: string;
+  loaiSanPham: LoaiSanPham;
+  soTien: number;
+  moTaSanPham: string;
 };
 
-const AddUserInputSchema = yup.object().shape({
-  soDienThoai: yup.string(),
+const AddSanPhamInputSchema = yup.object().shape({
   ten: yup.string().required("Cần điền thông tin"),
-  gioiTinh: yup.string().required("Cần điền thông tin"),
-  ghiChu: yup.string(),
+  moTaSanPham: yup.string().required("Cần điền thông tin"),
+  soTien: yup.number().required("Cần điền thông tin"),
 });
 type Props = {};
-const AddUser: FC<Props> = () => {
+const AddSanPham: FC<Props> = () => {
   const navigate = useNavigate();
   const [images, setImages] = useState<File[]>();
   const [loadingMain, setLoadingMain] = useState(false);
@@ -38,12 +39,12 @@ const AddUser: FC<Props> = () => {
     getValues,
     reset,
     handleSubmit,
-  } = useForm<AddUserInputForm>({
+  } = useForm<AddSanPhamInputForm>({
     mode: "onBlur",
-    resolver: yupResolver(AddUserInputSchema),
+    resolver: yupResolver(AddSanPhamInputSchema),
   });
 
-  const [addUser] = useAddUserMutation();
+  const [AddSanPham] = useThemSanPhamMutation();
   const submitHandler = async () => {
     let sendImage: StoredFileInputType | null = null;
     try {
@@ -51,26 +52,29 @@ const AddUser: FC<Props> = () => {
       const formData = new FormData();
       if (images && images.length > 0) {
         images.forEach((f) => formData.append("file", f));
-        formData.append("storagePath", "se/users/avatars");
+        formData.append("storagePath", "bao/sp/avatars");
         const res = await axios.post(SERVER_URL + "/upload/file", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log(res.data);
         sendImage = res.data["fileReference"];
       }
-      await addUser({
+      const { loaiSanPham, moTaSanPham, soTien, ten } = getValues();
+      await AddSanPham({
         variables: {
           input: {
-            ...getValues(),
+            loaiSanPham,
+            ten,
+            moTaSanPham,
+            soTien: +soTien,
             avatar: sendImage,
           },
         },
         onCompleted(data) {
-          const { addUser } = data;
-          if (addUser.error) {
-            toast.error(addUser.error.message);
+          const { addSanPham } = data;
+          if (addSanPham.error) {
+            toast.error(addSanPham.error.message);
             throw new Error();
           }
           reset();
@@ -158,37 +162,38 @@ const AddUser: FC<Props> = () => {
                 <FormInput
                   id="ten"
                   registerReturn={register("ten")}
-                  labelText="Họ và tên (*)"
+                  labelText="Tên sản phẩm (*)"
                   errorMessage={errors.ten?.message}
                   type={"text"}
                 />
               </div>
 
               <div className="col-span-1">
-                <FormInput
-                  id="gioiTinh"
-                  registerReturn={register("gioiTinh")}
-                  labelText="Giới tính (*)"
-                  errorMessage={errors.gioiTinh?.message}
-                  type={"text"}
+                <SelectInput2
+                  id="loaiSanPham"
+                  registerReturn={register("loaiSanPham")}
+                  labelText="Loại sản phẩm(*)"
+                  errorMessage={errors.loaiSanPham?.message}
+                  showedValues={Object.keys(LoaiSanPham)}
+                  values={Object.values(LoaiSanPham)}
                 />
               </div>
               <div className="col-span-1">
                 <FormInput
-                  id="soDienThoai"
-                  registerReturn={register("soDienThoai")}
-                  labelText="Số điện thoại"
-                  errorMessage={errors.soDienThoai?.message}
-                  type={"text"}
+                  id="soTien"
+                  registerReturn={register("soTien")}
+                  labelText="Số tiền"
+                  errorMessage={errors.soTien?.message}
+                  type={"number"}
                 />
               </div>
 
               <div className="col-span-1">
                 <FormInput
-                  id="ghiChu"
-                  registerReturn={register("ghiChu")}
-                  labelText="Ghi chú"
-                  errorMessage={errors.ghiChu?.message}
+                  id="moTaSanPham"
+                  registerReturn={register("moTaSanPham")}
+                  labelText="Mô tả sản phẩm"
+                  errorMessage={errors.moTaSanPham?.message}
                   type={"text"}
                 />
               </div>
@@ -198,7 +203,7 @@ const AddUser: FC<Props> = () => {
       </div>
       <div className="pt-5 flex justify-end space-x-3">
         <button
-          onClick={() => navigate("/manager/users")}
+          onClick={() => navigate("/manager/")}
           type="button"
           className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
@@ -207,11 +212,11 @@ const AddUser: FC<Props> = () => {
         {/* <button onClick={handleSubmit(submitHandler)}>Thêm</button> */}
         <LoadingButton
           loading={loadingMain}
-          text="Thêm người"
+          text="Thêm sản phẩm"
           className="w-fit"
         />
       </div>
     </form>
   );
 };
-export default AddUser;
+export default AddSanPham;

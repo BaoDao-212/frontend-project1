@@ -11,7 +11,7 @@ import { useDanhSachNguoiDungLazyQuery } from "../../../graphql/generated/schema
 import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
 type ByState = {
   hoTen?: string;
-  canCuocCongDan?: string;
+  soDienThoai?: string;
 };
 
 type Props = {};
@@ -38,16 +38,16 @@ const UserManager = (props: Props) => {
   );
   const [byState, setByState] = useState<ByState>({
     hoTen: undefined,
-    canCuocCongDan: undefined,
+    soDienThoai: undefined,
   });
   const [page, setPage] = useState<number>(1);
   useEffect(() => {
-    let { hoTen, canCuocCongDan } = byState;
+    let { hoTen, soDienThoai } = byState;
     getUsers({
       variables: {
         input: {
           hoTen,
-          canCuocCongDan,
+          soDienThoai,
           paginationInput: {
             page,
             resultsPerPage: 16,
@@ -88,23 +88,7 @@ const UserManager = (props: Props) => {
           );
         },
       },
-      {
-        Header: "Vai trò",
-        // @ts-ignore
-        accessor: (row) => VaitroNguoiDungDisplay[row["vaiTroNguoiDung"]],
-      },
-      {
-        Header: "Đã đăng kí",
-        // @ts-ignore
-        accessor: (row) => {
-          return row["daDangKi"] ? "Đã đăng kí" : "Chưa đăng kí";
-        },
-      },
-      {
-        Header: "Căn cước công dân",
-        // @ts-ignore
-        accessor: (row) => row["canCuocCongDan"],
-      },
+
       {
         Header: "SĐT",
         // @ts-ignore
@@ -114,16 +98,6 @@ const UserManager = (props: Props) => {
         Header: "Giới tính",
         // @ts-ignore
         accessor: (row) => row["gioiTinh"],
-      },
-      {
-        Header: "Ngày sinh",
-        // @ts-ignore
-        accessor: (row) =>
-          new Date(row["ngaySinh"]).toLocaleDateString("vi", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          }),
       },
       {
         Header: "Hành động",
@@ -178,10 +152,8 @@ const UserManager = (props: Props) => {
             />
             <TextSearchInput
               labelText="Căn cước công dân"
-              setText={(v) =>
-                setByState((pre) => ({ ...pre, canCuocCongDan: v }))
-              }
-              // text={byState.canCuocCongDan}
+              setText={(v) => setByState((pre) => ({ ...pre, soDienThoai: v }))}
+              // text={byState.soDienThoai}
             />
             {/* <div className="flex flex-col space-y-1">
               <h1 className="text-gray-700 font-medium">Vai trò</h1>

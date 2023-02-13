@@ -1,0 +1,9 @@
+mutation ThemMaGiamGia($input: AddMaGiamGiaInput!) {
+  addMaGiamGia(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+  }
+}

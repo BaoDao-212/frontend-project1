@@ -41,14 +41,6 @@ type EditUserInputForm = {
   soDienThoai: string;
   ten: string;
   gioiTinh: string;
-  biDanh: string;
-  ngaySinh: Date;
-  noiSinh: string;
-  queQuan: string;
-  noiThuongTruTruocDo: string;
-  ngayDangKiThuongTru: Date;
-  ngheNghiep: string;
-  noiLamViec: string;
   danToc: string;
   ghiChu: string;
 };
@@ -57,15 +49,8 @@ const UpdateUserInputSchema = yup.object().shape({
   soDienThoai: yup.string(),
   ten: yup.string(),
   gioiTinh: yup.string(),
-  biDanh: yup.string(),
-  ngaySinh: yup.date(),
-  noiSinh: yup.string(),
-  queQuan: yup.string(),
-  noiThuongTruTruocDo: yup.string(),
-  ngheNghiep: yup.string(),
-  noiLamViec: yup.string(),
   danToc: yup.string(),
-  ghiChu: yup.string(),
+  // ghiChu: yup.string(),
 });
 type Props = {};
 const EditUser: FC<Props> = () => {
@@ -104,16 +89,8 @@ const EditUser: FC<Props> = () => {
         soDienThoai: user.soDienThoai || undefined,
         ten: user.ten,
         gioiTinh: user.gioiTinh,
-        biDanh: user.biDanh || undefined,
-        ngaySinh: user.ngaySinh.split("T")[0],
-        noiSinh: user.noiSinh,
-        queQuan: user.queQuan,
-        noiThuongTruTruocDo: user.noiThuongTruTruocDo || undefined,
-        ngayDangKiThuongTru: user.ngayDangKiThuongTru,
-        ngheNghiep: user.ngheNghiep || undefined,
-        noiLamViec: user.noiLamViec || undefined,
-        danToc: user.danToc,
-        ghiChu: user.ghiChu || undefined,
+        // danToc: user.danToc,
+        // ghiChu: user.ghiChu || undefined,
       });
     },
     onError(err) {
@@ -128,6 +105,7 @@ const EditUser: FC<Props> = () => {
   const [editUser] = useEditUserMutation();
   const submitHandler = async () => {
     const oldFilePath = user?.avatar?.filePath;
+    console.log(oldFilePath);
     let sendImage: StoredFileInputType | undefined;
     try {
       setLoadingMain(true);
@@ -135,11 +113,13 @@ const EditUser: FC<Props> = () => {
         const formData = new FormData();
         formData.append("file", image);
         formData.append("storagePath", "se/users/avatars");
+        console.log(image);
         const res = await axios.post(SERVER_URL + "/upload/file", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
         });
+        // console.log(res);
         sendImage = res.data["fileReference"];
       }
       await editUser({
@@ -147,7 +127,7 @@ const EditUser: FC<Props> = () => {
           input: {
             ...omitBy(getValues(), (value) => value === ""),
             avatar: sendImage || undefined,
-            nguoiYeuCauId: params.id!,
+            nguoiCanEditId: params.id!,
           },
         },
         onCompleted(data) {
@@ -159,6 +139,7 @@ const EditUser: FC<Props> = () => {
           toast.success("Cập nhật thành công");
         },
         onError(err) {
+          // console.log(err);
           const msg = getApolloErrorMessage(err);
           if (msg) toast.error(msg);
           else toast.error("Lỗi xảy ra, thử lại sau");
@@ -238,8 +219,8 @@ const EditUser: FC<Props> = () => {
                 <div className="pl-4 grid grid-cols-2 gap-x-8 gap-y-4">
                   <div className="col-span-1">
                     <FixField
-                      labelText="Căn cước công dân"
-                      value={user.canCuocCongDan}
+                      labelText="Số điện thoại"
+                      value={user.soDienThoai}
                     />
                   </div>
                   <div className="col-span-1">
@@ -253,91 +234,10 @@ const EditUser: FC<Props> = () => {
                   </div>
                   <div className="col-span-1">
                     <FormInput
-                      id="biDanh"
-                      registerReturn={register("biDanh")}
-                      labelText="Bí danh"
-                      errorMessage={errors.biDanh?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="ngaySinh"
-                      registerReturn={register("ngaySinh")}
-                      labelText="Ngày sinh (*)"
-                      errorMessage={errors.ngaySinh?.message}
-                      type={"date"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
                       id="gioiTinh"
                       registerReturn={register("gioiTinh")}
                       labelText="Giới tính (*)"
                       errorMessage={errors.gioiTinh?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="soDienThoai"
-                      registerReturn={register("soDienThoai")}
-                      labelText="Số điện thoại"
-                      errorMessage={errors.soDienThoai?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="noiSinh"
-                      registerReturn={register("noiSinh")}
-                      labelText="Nơi sinh (*)"
-                      errorMessage={errors.noiSinh?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="queQuan"
-                      registerReturn={register("queQuan")}
-                      labelText="Quê quán (*)"
-                      errorMessage={errors.queQuan?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="danToc"
-                      registerReturn={register("danToc")}
-                      labelText="Dân tộc (*)"
-                      errorMessage={errors.danToc?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="noiThuongTruTruocDo"
-                      registerReturn={register("noiThuongTruTruocDo")}
-                      labelText="Nơi thường trú trước đó"
-                      errorMessage={errors.noiThuongTruTruocDo?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="ngheNghiep"
-                      registerReturn={register("ngheNghiep")}
-                      labelText="Nghề nghiệp"
-                      errorMessage={errors.ngheNghiep?.message}
-                      type={"text"}
-                    />
-                  </div>
-                  <div className="col-span-1">
-                    <FormInput
-                      id="noiLamViec"
-                      registerReturn={register("noiLamViec")}
-                      labelText="Nơi làm việc"
-                      errorMessage={errors.noiLamViec?.message}
                       type={"text"}
                     />
                   </div>
