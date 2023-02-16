@@ -32,7 +32,7 @@ const UserDetailsForUsers: FC<Props> = () => {
       <div className="overflow-hidden bg-white py-4 pr-10">
         <div className="pl-4 py-5 sm:px-6 mt-2 ">
           <h3 className="text-3xl font-bold leading-6 text-indigo-700 mb-6 pb-6 border-b border-gray-300">
-            Thông tin nhân khẩu
+            Thông tin người dùng
           </h3>
         </div>
         <div className="grid grid-cols-12 pl-6">

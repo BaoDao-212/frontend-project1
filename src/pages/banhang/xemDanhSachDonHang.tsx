@@ -3,26 +3,29 @@ import { Fragment, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 import { toast } from "react-toastify";
+import DateSearchInput from "../../components/form/DateSearchInput";
+import SelectInput2 from "../../components/form/SelectInput2";
 import TextSearchInput from "../../components/form/TextSearchInput";
 import Loading from "../../components/Loading";
 import {
   LoaiSanPham,
-  useDanhSachSanPhamLazyQuery,
+  useDanhSachDonHangLazyQuery,
 } from "../../graphql/generated/schema";
 import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
 
 type ByState = {
-  ten?: string;
+  ngayMua?: Date;
 };
 
 type Props = {};
-const DanhSachSanPham = (props: Props) => {
+const DanhSachDonHang = (props: Props) => {
   const navigate = useNavigate();
-  const [getSanPhams, { data: spData, loading }] = useDanhSachSanPhamLazyQuery({
+  const [getDonHangs, { data: dhData, loading }] = useDanhSachDonHangLazyQuery({
     onCompleted(data) {
-      const { xemDanhSachSanPham } = data;
-      if (xemDanhSachSanPham.error) {
-        toast.error(xemDanhSachSanPham.error.message);
+      const { xemDanhSachDonHang } = data;
+      console.log(xemDanhSachDonHang);
+      if (xemDanhSachDonHang.error) {
+        toast.error(xemDanhSachDonHang.error.message);
         return;
       }
     },
@@ -36,101 +39,86 @@ const DanhSachSanPham = (props: Props) => {
     },
   });
   const [byState, setByState] = useState<ByState>({
-    ten: undefined,
+    ngayMua: new Date(),
   });
   const [page, setPage] = useState<number>(1);
   useEffect(() => {
-    let { ten } = byState;
-    getSanPhams({
+    let { ngayMua } = byState;
+    // console.log(ngayMua?.toDateString());
+
+    getDonHangs({
       variables: {
         input: {
-          tenSanPham: ten,
+          ngayMua: ngayMua,
           paginationInput: {
-            page,
+            page: 1,
             resultsPerPage: 16,
           },
         },
       },
     });
   }, [byState, page]);
-  const sanPhams = spData?.xemDanhSachSanPham.sanPhams;
+  console.log(dhData?.xemDanhSachDonHang.DonHangs);
+
+  const donHangs = dhData?.xemDanhSachDonHang.DonHangs;
+  // console.log(dhData);
   const columns = useMemo(() => {
     return [
       {
-        Header: "Tên sản phẩm",
+        Header: "Mã đơn",
         // @ts-ignore
-        accessor: (row) => row,
-        // @ts-ignore
-        Cell: (row) => {
-          const data = row["row"]["original"];
-          return (
-            <div className="flex space-x-2 items-center">
-              {data["avatar"] && (
-                <img
-                  className="w-8 h-8 rounded-full object-center"
-                  src={data["avatar"]["fileUrl"]}
-                  alt="image"
-                />
-              )}
-              {!data["avatar"] && (
-                <UserCircleIcon className="w-8 h-8 rounded-full object-center" />
-              )}
-              <h1>{data["ten"]}</h1>
-            </div>
-          );
-        },
+        accessor: (row) => row["id"],
       },
-      {
-        Header: "Giá",
-        // @ts-ignore
-        accessor: (row) => {
-          return row["soTien"];
-        },
-      },
-      {
-        Header: "Loại sản phẩm",
-        // @ts-ignore
-        accessor: (row) => {
-          return row["loaiSanPham"] == LoaiSanPham.DoNgot
-            ? "Đồ ngọt"
-            : "Nước uống";
-        },
-      },
-      {
-        Header: "Hành động",
-        //@ts-ignore
-        accessor: (row) => row,
-        // @ts-ignore
-        Cell: (row) => {
-          const data = row["row"]["original"];
-          return (
-            <div className="space-x-2">
-              <button
-                onClick={() => {
-                  navigate(`/manager/sp/detail/${data["id"]}`);
-                }}
-                className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
-              >
-                Chi tiết
-              </button>
-              <button
-                onClick={() => {
-                  navigate(`/manager/sp/edit/${data["id"]}`);
-                }}
-                className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
-              >
-                Cập nhật
-              </button>
-            </div>
-          );
-        },
-      },
+      // {
+      //   Header: "Giá",
+      //   // @ts-ignore
+      //   accessor: (row) => {
+      //     return row["soTien"];
+      //   },
+      // },
+      // {
+      //   Header: "Loại sản phẩm",
+      //   // @ts-ignore
+      //   accessor: (row) => {
+      //     return row["loaiSanPham"] == LoaiSanPham.DoNgot
+      //       ? "Đồ ngọt"
+      //       : "Nước uống";
+      //   },
+      // },
+      // {
+      //   Header: "Hành động",
+      //   //@ts-ignore
+      //   accessor: (row) => row,
+      //   // @ts-ignore
+      //   Cell: (row) => {
+      //     const data = row["row"]["original"];
+      //     return (
+      //       <div className="space-x-2">
+      //         <button
+      //           onClick={() => {
+      //             navigate(`/manager/sp/detail/${data["id"]}`);
+      //           }}
+      //           className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
+      //         >
+      //           Chi tiết
+      //         </button>
+      //         <button
+      //           onClick={() => {
+      //             navigate(`/manager/sp/edit/${data["id"]}`);
+      //           }}
+      //           className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
+      //         >
+      //           Cập nhật
+      //         </button>
+      //       </div>
+      //     );
+      //   },
+      // },
     ];
   }, []);
-  const data = useMemo(() => sanPhams || [], [sanPhams]);
+  const data = useMemo(() => donHangs || [], [donHangs]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ data, columns });
-  console.log(spData);
   return (
     <Fragment>
       <main className="flex-1 mb-8">
@@ -142,12 +130,14 @@ const DanhSachSanPham = (props: Props) => {
             </h1>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 flex space-x-3">
-            <TextSearchInput
-              labelText="Tên sản phẩm"
-              setText={(v) => setByState((pre) => ({ ...pre, ten: v }))}
+            <DateSearchInput
+              id="NgayMua"
+              labelText="Ngày mua (*)"
+              showedValues={Object.keys(Date)}
+              values={Object.values(Date)}
             />
             <button
-              onClick={() => navigate("/manager/sp/add")}
+              onClick={() => navigate("/banhang/add")}
               className="w-fit h-fit flex my-auto justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Thêm mới
@@ -155,7 +145,7 @@ const DanhSachSanPham = (props: Props) => {
           </div>
         </div>
         {loading && <Loading />}
-        {!loading && spData && (
+        {!loading && dhData && (
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
@@ -211,4 +201,4 @@ const DanhSachSanPham = (props: Props) => {
   );
 };
 
-export default DanhSachSanPham;
+export default DanhSachDonHang;

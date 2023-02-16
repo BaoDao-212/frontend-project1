@@ -1,0 +1,16 @@
+query DanhSachDonHang($input: XemDanhSachDonHangInput!) {
+  xemDanhSachDonHang(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    DonHangs {
+      ...DonHangFragment
+    }
+    paginationOutput {
+      totalPages
+      totalResults
+    }
+  }
+}

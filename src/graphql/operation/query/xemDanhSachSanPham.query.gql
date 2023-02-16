@@ -8,5 +8,9 @@ query DanhSachSanPham($input: XemDanhSachSanPhamInput!) {
     sanPhams {
       ...SanPhamFragment
     }
+    paginationOutput{
+      totalPages
+      totalResults
+    }
   }
 }

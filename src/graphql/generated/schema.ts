@@ -130,17 +130,6 @@ export type DonHang = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type DonHangInputType = {
-  ghiChu?: InputMaybe<Scalars['String']>;
-  hinhThucMua: HinhThucMua;
-  maGiamGia?: InputMaybe<MaGiamGiaInputType>;
-  ngayMua?: InputMaybe<Scalars['DateTime']>;
-  nguoiMua: UserInputType;
-  sanPham: Array<SanPhamInputType>;
-  soluong: Array<Scalars['Float']>;
-  tongTienPhaiTra: Scalars['Float'];
-};
-
 export type EditNhanVienInput = {
   MailLienHe?: InputMaybe<Scalars['String']>;
   caLamViec?: InputMaybe<CaLamViec>;
@@ -162,18 +151,12 @@ export type EditNhanVienOutput = {
 
 export type EditSanPhamInput = {
   avatar?: InputMaybe<StoredFileInputType>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  donHang?: InputMaybe<Array<DonHangInputType>>;
-  ghiChu?: InputMaybe<Scalars['String']>;
-  id?: InputMaybe<Scalars['ID']>;
   loaiSanPham?: InputMaybe<LoaiSanPham>;
   moTaSanPham?: InputMaybe<Scalars['String']>;
-  ngayTao?: InputMaybe<Scalars['DateTime']>;
   sanPhamId: Scalars['ID'];
   soTien?: InputMaybe<Scalars['Float']>;
   ten?: InputMaybe<Scalars['String']>;
   trangThai?: InputMaybe<TrangThai>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type EditSanPhamOutput = {
@@ -230,15 +213,6 @@ export type MaGiamGia = {
   startDate: Scalars['DateTime'];
   typeDiscount: TypeDiscount;
   updatedAt: Scalars['DateTime'];
-  voucherAmount: Scalars['Float'];
-};
-
-export type MaGiamGiaInputType = {
-  codeVoucher: Scalars['String'];
-  endDate: Scalars['DateTime'];
-  minAmount: Scalars['Float'];
-  startDate: Scalars['DateTime'];
-  typeDiscount: TypeDiscount;
   voucherAmount: Scalars['Float'];
 };
 
@@ -454,18 +428,6 @@ export type SanPham = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type SanPhamInputType = {
-  avatar?: InputMaybe<StoredFileInputType>;
-  donHang: Array<DonHangInputType>;
-  ghiChu?: InputMaybe<Scalars['String']>;
-  loaiSanPham: LoaiSanPham;
-  moTaSanPham?: InputMaybe<Scalars['String']>;
-  ngayTao: Scalars['DateTime'];
-  soTien?: InputMaybe<Scalars['Float']>;
-  ten: Scalars['String'];
-  trangThai: TrangThai;
-};
-
 export type StoredFile = {
   __typename?: 'StoredFile';
   filePath: Scalars['String'];
@@ -499,17 +461,6 @@ export type User = {
   soDienThoai?: Maybe<Scalars['String']>;
   ten: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  vaiTroNguoiDung: VaitroNguoiDung;
-};
-
-export type UserInputType = {
-  avatar?: InputMaybe<StoredFileInputType>;
-  daDangKi: Scalars['Boolean'];
-  ghiChu?: InputMaybe<Scalars['String']>;
-  gioiTinh: Scalars['String'];
-  matKhau?: InputMaybe<Scalars['String']>;
-  soDienThoai?: InputMaybe<Scalars['String']>;
-  ten: Scalars['String'];
   vaiTroNguoiDung: VaitroNguoiDung;
 };
 
@@ -642,6 +593,8 @@ export type XemThongTinSanPhamOutput = {
   sanpham?: Maybe<SanPham>;
 };
 
+export type DonHangFragmentFragment = { __typename?: 'DonHang', id: string, hinhThucMua: HinhThucMua, createdAt: any, updatedAt: any, ngayMua?: any | null, tongTienPhaiTra: number, ghiChu?: string | null, nguoiMua: { __typename?: 'User', id: string, gioiTinh: string, soDienThoai?: string | null, vaiTroNguoiDung: VaitroNguoiDung, ten: string, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null }, sanPham: Array<{ __typename?: 'SanPham', id: string, ten: string, loaiSanPham: LoaiSanPham, ngayTao: any, soTien?: number | null, moTaSanPham?: string | null, ghiChu?: string | null, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null }>, maGiamGia?: { __typename?: 'MaGiamGia', id: string, codeVoucher: string, minAmount: number, voucherAmount: number, startDate: any, endDate: any, typeDiscount: TypeDiscount } | null };
+
 export type SanPhamFragmentFragment = { __typename?: 'SanPham', id: string, ten: string, loaiSanPham: LoaiSanPham, ngayTao: any, soTien?: number | null, moTaSanPham?: string | null, ghiChu?: string | null, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null };
 
 export type UserFragmentFragment = { __typename?: 'User', id: string, gioiTinh: string, soDienThoai?: string | null, vaiTroNguoiDung: VaitroNguoiDung, ten: string, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null };
@@ -709,7 +662,9 @@ export type SanPhamDetailsQueryVariables = Exact<{
 }>;
 
 
-export type SanPhamDetailsQuery = { __typename?: 'Query', xemThongTinSanPham: { __typename?: 'XemThongTinSanPhamOutput', ok: boolean, error?: { __typename?: 'CustomError', mainReason: string, message: string } | null, sanpham?: { __typename?: 'SanPham', id: string, ten: string, loaiSanPham: LoaiSanPham, ngayTao: any, soTien?: number | null, moTaSanPham?: string | null, ghiChu?: string | null, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null } | null } };
+export type SanPhamDetailsQuery = { __typename?: 'Query', xemThongTinSanPham: { __typename?: 'XemThongTinSanPhamOutput', ok: boolean, error?: { __typename?: 'CustomError', mainReason: string, message: string } | null, sanpham?: {
+    trangthai: TrangThai | undefined; __typename?: 'SanPham', id: string, ten: string, loaiSanPham: LoaiSanPham, ngayTao: any, soTien?: number | null, moTaSanPham?: string | null, ghiChu?: string | null, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null 
+} | null } };
 
 export type DanhSachNguoiDungQueryVariables = Exact<{
   input: XemDanhSachNguoiDungInput;
@@ -744,12 +699,19 @@ export type UserDetailsQueryVariables = Exact<{
 
 export type UserDetailsQuery = { __typename?: 'Query', xemThongTinNguoiDungChoQuanLi: { __typename?: 'XemThongTinNguoiDungOutput', ok: boolean, error?: { __typename?: 'CustomError', mainReason: string, message: string } | null, user?: { __typename?: 'User', id: string, gioiTinh: string, soDienThoai?: string | null, vaiTroNguoiDung: VaitroNguoiDung, ten: string, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null } | null } };
 
+export type DanhSachDonHangQueryVariables = Exact<{
+  input: XemDanhSachDonHangInput;
+}>;
+
+
+export type DanhSachDonHangQuery = { __typename?: 'Query', xemDanhSachDonHang: { __typename?: 'XemDanhSachDonHangOutput', ok: boolean, error?: { __typename?: 'CustomError', mainReason: string, message: string } | null, DonHangs?: Array<{ __typename?: 'DonHang', id: string, hinhThucMua: HinhThucMua, createdAt: any, updatedAt: any, ngayMua?: any | null, tongTienPhaiTra: number, ghiChu?: string | null, nguoiMua: { __typename?: 'User', id: string, gioiTinh: string, soDienThoai?: string | null, vaiTroNguoiDung: VaitroNguoiDung, ten: string, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null }, sanPham: Array<{ __typename?: 'SanPham', id: string, ten: string, loaiSanPham: LoaiSanPham, ngayTao: any, soTien?: number | null, moTaSanPham?: string | null, ghiChu?: string | null, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null }>, maGiamGia?: { __typename?: 'MaGiamGia', id: string, codeVoucher: string, minAmount: number, voucherAmount: number, startDate: any, endDate: any, typeDiscount: TypeDiscount } | null }> | null, paginationOutput?: { __typename?: 'PaginationOutput', totalPages?: number | null, totalResults?: number | null } | null } };
+
 export type DanhSachSanPhamQueryVariables = Exact<{
   input: XemDanhSachSanPhamInput;
 }>;
 
 
-export type DanhSachSanPhamQuery = { __typename?: 'Query', xemDanhSachSanPham: { __typename?: 'XemDanhSachSanPhamOutput', ok: boolean, error?: { __typename?: 'CustomError', mainReason: string, message: string } | null, sanPhams?: Array<{ __typename?: 'SanPham', id: string, ten: string, loaiSanPham: LoaiSanPham, ngayTao: any, soTien?: number | null, moTaSanPham?: string | null, ghiChu?: string | null, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null }> | null } };
+export type DanhSachSanPhamQuery = { __typename?: 'Query', xemDanhSachSanPham: { __typename?: 'XemDanhSachSanPhamOutput', ok: boolean, error?: { __typename?: 'CustomError', mainReason: string, message: string } | null, sanPhams?: Array<{ __typename?: 'SanPham', id: string, ten: string, loaiSanPham: LoaiSanPham, ngayTao: any, soTien?: number | null, moTaSanPham?: string | null, ghiChu?: string | null, avatar?: { __typename?: 'StoredFile', fileUrl: string, filePath: string } | null }> | null, paginationOutput?: { __typename?: 'PaginationOutput', totalPages?: number | null, totalResults?: number | null } | null } };
 
 export type DanhSachVoucherQueryVariables = Exact<{
   input: XemDanhSachMaGiamGiaInput;
@@ -758,6 +720,19 @@ export type DanhSachVoucherQueryVariables = Exact<{
 
 export type DanhSachVoucherQuery = { __typename?: 'Query', xemDanhSachMaGiamGia: { __typename?: 'XemDanhSachMaGiamGiaOutput', ok: boolean, error?: { __typename?: 'CustomError', mainReason: string, message: string } | null, maGiamGias?: Array<{ __typename?: 'MaGiamGia', id: string, codeVoucher: string, minAmount: number, voucherAmount: number, startDate: any, endDate: any, typeDiscount: TypeDiscount }> | null } };
 
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  id
+  gioiTinh
+  avatar {
+    fileUrl
+    filePath
+  }
+  soDienThoai
+  vaiTroNguoiDung
+  ten
+}
+    `;
 export const SanPhamFragmentFragmentDoc = gql`
     fragment SanPhamFragment on SanPham {
   id
@@ -773,19 +748,6 @@ export const SanPhamFragmentFragmentDoc = gql`
   ghiChu
 }
     `;
-export const UserFragmentFragmentDoc = gql`
-    fragment UserFragment on User {
-  id
-  gioiTinh
-  avatar {
-    fileUrl
-    filePath
-  }
-  soDienThoai
-  vaiTroNguoiDung
-  ten
-}
-    `;
 export const VoucherFragmentFragmentDoc = gql`
     fragment VoucherFragment on MaGiamGia {
   id
@@ -797,6 +759,28 @@ export const VoucherFragmentFragmentDoc = gql`
   typeDiscount
 }
     `;
+export const DonHangFragmentFragmentDoc = gql`
+    fragment DonHangFragment on DonHang {
+  id
+  nguoiMua {
+    ...UserFragment
+  }
+  hinhThucMua
+  createdAt
+  updatedAt
+  sanPham {
+    ...SanPhamFragment
+  }
+  maGiamGia {
+    ...VoucherFragment
+  }
+  ngayMua
+  tongTienPhaiTra
+  ghiChu
+}
+    ${UserFragmentFragmentDoc}
+${SanPhamFragmentFragmentDoc}
+${VoucherFragmentFragmentDoc}`;
 export const ThemDonHangDocument = gql`
     mutation ThemDonHang($input: AddDonHangInput!) {
   addDonHang(input: $input) {
@@ -1341,6 +1325,52 @@ export function useUserDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type UserDetailsQueryHookResult = ReturnType<typeof useUserDetailsQuery>;
 export type UserDetailsLazyQueryHookResult = ReturnType<typeof useUserDetailsLazyQuery>;
 export type UserDetailsQueryResult = Apollo.QueryResult<UserDetailsQuery, UserDetailsQueryVariables>;
+export const DanhSachDonHangDocument = gql`
+    query DanhSachDonHang($input: XemDanhSachDonHangInput!) {
+  xemDanhSachDonHang(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    DonHangs {
+      ...DonHangFragment
+    }
+    paginationOutput {
+      totalPages
+      totalResults
+    }
+  }
+}
+    ${DonHangFragmentFragmentDoc}`;
+
+/**
+ * __useDanhSachDonHangQuery__
+ *
+ * To run a query within a React component, call `useDanhSachDonHangQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDanhSachDonHangQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDanhSachDonHangQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDanhSachDonHangQuery(baseOptions: Apollo.QueryHookOptions<DanhSachDonHangQuery, DanhSachDonHangQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DanhSachDonHangQuery, DanhSachDonHangQueryVariables>(DanhSachDonHangDocument, options);
+      }
+export function useDanhSachDonHangLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DanhSachDonHangQuery, DanhSachDonHangQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DanhSachDonHangQuery, DanhSachDonHangQueryVariables>(DanhSachDonHangDocument, options);
+        }
+export type DanhSachDonHangQueryHookResult = ReturnType<typeof useDanhSachDonHangQuery>;
+export type DanhSachDonHangLazyQueryHookResult = ReturnType<typeof useDanhSachDonHangLazyQuery>;
+export type DanhSachDonHangQueryResult = Apollo.QueryResult<DanhSachDonHangQuery, DanhSachDonHangQueryVariables>;
 export const DanhSachSanPhamDocument = gql`
     query DanhSachSanPham($input: XemDanhSachSanPhamInput!) {
   xemDanhSachSanPham(input: $input) {
@@ -1351,6 +1381,10 @@ export const DanhSachSanPhamDocument = gql`
     }
     sanPhams {
       ...SanPhamFragment
+    }
+    paginationOutput {
+      totalPages
+      totalResults
     }
   }
 }

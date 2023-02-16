@@ -5,16 +5,16 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { FormInput } from "../../components/form/FormInput";
-import LoadingButton from "../../components/form/LoadingButton";
-import SelectInput2 from "../../components/form/SelectInput2";
-import { SERVER_URL } from "../../config";
+import { FormInput } from "../../../components/form/FormInput";
+import LoadingButton from "../../../components/form/LoadingButton";
+import SelectInput2 from "../../../components/form/SelectInput2";
+import { SERVER_URL } from "../../../config";
 import {
   LoaiSanPham,
   StoredFileInputType,
   useThemSanPhamMutation,
-} from "../../graphql/generated/schema";
-import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
+} from "../../../graphql/generated/schema";
+import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
 
 type AddSanPhamInputForm = {
   ten: string;
@@ -89,15 +89,6 @@ const AddSanPham: FC<Props> = () => {
         },
       });
     } catch (err) {
-      // if (sendImage)
-      //   await axios.post(SERVER_URL + "/delete/file", {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     data: {
-      //       storagePath: sendImage.filePath,
-      //     },
-      //   });
     } finally {
       setLoadingMain(false);
     }

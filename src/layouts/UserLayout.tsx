@@ -19,7 +19,7 @@ const navigation = [
   },
   {
     routes: ["/manager"],
-    name: "Quản lý quản lý",
+    name: "Quản lý",
     icon: KeyIcon,
     current: false,
   },

@@ -26,7 +26,7 @@ const TextSearchInput: FC<Props> = ({ setText, labelText, className }) => {
         onChange={(e) => setValue(e.target.value)}
         type={"text"}
         className={
-          "appearance-none block w-full px-2 h-full border border-gray-300 shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm " +
+          "bg-slate-200 border border-slate-200 text-zinc-700-100 placeholder-slate-100 text-sm rounded-lg focus:ring-slate-100 focus:border-slate-300 block w-50 max-w-xs p-2.5 dark:bg-green-100 dark:border-green-400" +
             className || ""
         }
       ></input>

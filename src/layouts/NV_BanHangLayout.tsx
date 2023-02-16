@@ -13,6 +13,7 @@ import {
 } from "@heroicons/react/solid";
 import { cloneDeep } from "lodash";
 import DesktopSidebar from "../components/pages/managerPage/DesktopSidebar";
+import Narbar from "../components/pages/narbar_NV.tsx/narbar";
 
 const navigation = [
   {
@@ -70,8 +71,8 @@ const NVBanHangLayout = (props: Props) => {
   }, [location]);
   return (
     <Fragment>
-      <div className="min-h-full">
-        <DesktopSidebar navState={navState} setNavState={setNavState} />
+      <div className="w-h-full">
+        <Narbar navState={navState} setNavState={setNavState} />
         <div className="lg:pl-64 flex flex-col">
           <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
             <button

@@ -1,5 +1,6 @@
 import {
   CakeIcon,
+  CurrencyEuroIcon,
   UserCircleIcon,
   XCircleIcon,
   XIcon,
@@ -16,6 +17,8 @@ import { number } from "yup/lib/locale";
 import { FormInput2 } from "../../components/form/FormInput2";
 import LoadingButton from "../../components/form/LoadingButton";
 import SelectInput from "../../components/form/SelectInput";
+import TextSearchInput from "../../components/form/TextSearchInput";
+import PaginationNav from "../../components/PaginationNav";
 import {
   HinhThucMua,
   LoaiSanPham,
@@ -28,132 +31,120 @@ import {
 } from "../../graphql/generated/schema";
 import { loadingWhite } from "../../images";
 import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
-
+type ByState = {
+  tenSanPham?: string;
+};
 type Props = {
   setSanPham: (sanPham: SanPhamFragmentFragment) => void;
   setVoucher: (voucher: VoucherFragmentFragment) => void;
 };
-const SearchSanPhamInputs: FC<Props> = ({ setSanPham }) => {
-  const [tenSanPham, setTenSanPham] = useState<string>("");
-  const [getUsers, { loading }] = useDanhSachSanPhamLazyQuery();
-  const [results, setResults] = useState<SanPhamFragmentFragment[]>([]);
-  const [canShowResults, setCanShowResults] = useState<boolean>(false);
-
-  const ref = useRef<HTMLDivElement>(null);
+const SanPhamData: FC<Props> = ({ setSanPham }) => {
+  const navigate = useNavigate();
+  const [openHanhDong, setOpenHanhDong] = useState<boolean>(false);
+  const [getSanPham, { data: sanPhamData, loading }] =
+    useDanhSachSanPhamLazyQuery({
+      onCompleted(data) {
+        const { xemDanhSachSanPham } = data;
+        if (xemDanhSachSanPham.error) {
+          toast.error(xemDanhSachSanPham.error.message);
+          return;
+        }
+      },
+      onError(err) {
+        const msg = getApolloErrorMessage(err);
+        if (msg) {
+          toast.error(msg);
+          return;
+        }
+        toast.error("Lôi xảy ra, thử lại sau");
+      },
+    });
+  const [byState, setByState] = useState<ByState>({
+    tenSanPham: undefined,
+  });
+  const [page, setPage] = useState<number>(1);
   useEffect(() => {
-    // @ts-ignore
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setCanShowResults(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside, true);
-    return () => {
-      document.removeEventListener("click", handleClickOutside, true);
-    };
-  }, [ref]);
-  useEffect(() => {
-    setCanShowResults(true);
-    const timer = setTimeout(() => {
-      if (!tenSanPham) setTenSanPham("");
-      getUsers({
-        variables: {
-          input: {
-            tenSanPham,
-            paginationInput: {
-              page: 1,
-              resultsPerPage: 10,
-            },
+    let { tenSanPham } = byState;
+    getSanPham({
+      variables: {
+        input: {
+          tenSanPham,
+          paginationInput: {
+            page,
+            resultsPerPage: 8,
           },
         },
-        onCompleted: (data) => {
-          setResults(data.xemDanhSachSanPham.sanPhams || []);
-        },
-        onError: (error) => {
-          const msg = getApolloErrorMessage(error);
-          if (msg) {
-            toast.error(msg);
-            return;
-          }
-          toast.error("Lỗi xảy ra, vui lòng thử lại sau");
-        },
-      });
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [tenSanPham]);
+      },
+    });
+  }, [byState, page]);
+  const SanPhams = sanPhamData?.xemDanhSachSanPham.sanPhams || [];
   return (
-    <div className="flex flex-col grid-rows-2 space-y-3 mx-1 mb-2 p-3   ">
-      <div className="flex flex-col relative">
-        <div ref={ref}>
-          <input
-            className="mb-6 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            type="text"
-            value={tenSanPham}
-            onChange={(e) => setTenSanPham(e.target.value)}
-            onFocus={() => setCanShowResults(true)}
-          />
-          <div className=" grid grid-cols-3 gap-1 top-full left-0 w-full flex flex-col space-y-1 rounded-md shadow-md bg-gray-200 z-10">
-            {loading && (
-              <img className="w-32 h-32 mx-auto" src={loadingWhite}></img>
-            )}
-            {canShowResults &&
-              results.length > 0 &&
-              results.map(
-                ({ soTien, ten, avatar, loaiSanPham, moTaSanPham }, i) => {
-                  return (
-                    <div
-                      key={i}
-                      onClick={() => {
-                        setSanPham(results[i]);
-                        // setCanShowResults(true);
-                        setTenSanPham("");
-                      }}
-                      className="p-2 bg-white border border-indigo-500 rounded-md m-1 cursor-pointer hover:bg-indigo-500 hover:text-white "
-                    >
-                      <div className="">
-                        <div className="flex ">
-                          <div className="flex">
-                            {avatar && (
-                              <img
-                                className="w-20 h-20"
-                                src={avatar.fileUrl}
-                                alt="image"
-                              />
-                            )}
-                            {!avatar && loaiSanPham == LoaiSanPham.DoNgot && (
-                              <CakeIcon className="w-20 h-20 object-center" />
-                            )}
-                            {!avatar && loaiSanPham == LoaiSanPham.NuocUong && (
-                              <BanIcon className="w-20 h-20 object-center" />
-                            )}
-                          </div>
-                          <div className="px-3.5 flex flex flex-col">
-                            <h1>Sản phẩm: {ten}</h1>
-                            <h1>
-                              Giá: {soTien}
-                              (VNĐ)
-                            </h1>
-                            <h1>
-                              Loại sản phẩm:{" "}
-                              {loaiSanPham == LoaiSanPham.DoNgot
-                                ? "Đồ ngọt"
-                                : "Nước uống"}
-                            </h1>
-                            <h1>Mô tả sản phẩm: {moTaSanPham}</h1>
-                          </div>
-                        </div>
+    <div className="flex flex-col space-y-3 w-full">
+      <TextSearchInput
+        labelText="Tên sản phẩm"
+        setText={(v) => setByState((pre) => ({ ...pre, tenSanPham: v }))}
+      />
+      <div className="flex md:flex-row flex-wrap justify-start gap-6 ">
+        {loading && (
+          <img className="w-32 h-32 mx-auto" src={loadingWhite}></img>
+        )}
+        {SanPhams.length > 0 &&
+          SanPhams.map(
+            ({ soTien, ten, avatar, loaiSanPham, moTaSanPham }, i) => {
+              return (
+                <div
+                  key={i}
+                  onClick={() => {
+                    setSanPham(SanPhams[i]);
+                    // setCanShowResults(true);
+                  }}
+                >
+                  <div className="bg-white shadow-md w-52 overflow-hidden rounded-xl bg-white border rounded-md cursor-pointer">
+                    <div className="relative">
+                      <div className="flex">
+                        {avatar && (
+                          <img
+                            className="h-56 w-full object-center"
+                            src={avatar.fileUrl}
+                            alt="image"
+                          />
+                        )}
+                        {!avatar && loaiSanPham == LoaiSanPham.DoNgot && (
+                          <CakeIcon className="h-56  object-center" />
+                        )}
+                        {!avatar && loaiSanPham == LoaiSanPham.NuocUong && (
+                          <BanIcon className="h-56  object-center" />
+                        )}
+                      </div>
+                      <div className=" hover:bg-indigo-200 hover:text-white">
+                        <h1 className="text-lg capitalize font-semibold text-center">
+                          {ten}
+                        </h1>
+                        <h1 className="text-lg text-red-600 font-semibold text-center">
+                          {soTien}
+                          (VNĐ)
+                        </h1>
+                        <h1 className="bg-purple-200 text-purple-900 uppercase text-center font-semibold text-sm py-1 px-2 w-full rounded inline-block items-center">
+                          {loaiSanPham == LoaiSanPham.DoNgot
+                            ? "Đồ ngọt"
+                            : "Nước uống"}
+                        </h1>
                       </div>
                     </div>
-                  );
-                }
-              )}
-          </div>
-        </div>
+                  </div>
+                </div>
+              );
+            }
+          )}
       </div>
+      <PaginationNav
+        currentPage={page}
+        setCurrentPage={setPage}
+        totalPage={sanPhamData?.xemDanhSachSanPham.paginationOutput?.totalPages!}
+      />
     </div>
   );
 };
-
 const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
   const [CodeVoucher, setCodeVoucher] = useState<string>("");
   const [getUsers, { loading }] = useDanhSachVoucherLazyQuery();
@@ -261,6 +252,13 @@ const ThemDonHang: FC = () => {
     { sanPham: SanPhamFragmentFragment; soluong: number | null }[]
   >([]);
   const [voucher, setVoucher] = useState<VoucherFragmentFragment>();
+  var tongtien = 0;
+  sanPhams.forEach((sp) => {
+    tongtien += sp.sanPham.soTien! * sp.soluong! || 0;
+  });
+  if (tongtien >= voucher?.minAmount!) {
+    tongtien -= voucher?.voucherAmount!;
+  }
   const [ThemDonHang, { loading }] = useThemDonHangMutation();
   const {
     register,
@@ -287,8 +285,8 @@ const ThemDonHang: FC = () => {
             sanPhamId: tv.sanPham.id,
             numberSanPham: tv.soluong!,
           })),
-          diaChi: getValues("diaChi"),
-          PhiShip: +getValues("phiShip"),
+          diaChi: getValues("diaChi") || "",
+          PhiShip: +getValues("phiShip") || 0,
           hinhThucMua: getValues("hinhThucMua"),
           codeVoucher: voucher?.codeVoucher! || undefined,
         },
@@ -324,15 +322,12 @@ const ThemDonHang: FC = () => {
       className="space-y-8 pl-12 pr-16 pt-12 pb-16 "
     >
       <div className="flex flex-col col-span-1">
-        <h3 className="leading-6 font-semibold text-gray-900 text-3xl mb-8">
+        <h3 className="leading-6 font-extrabold text-gray-900 text-3xl mb-8">
           Đặt hàng
         </h3>
         <div className="grid grid-rows-2 gap-x-6 ">
           <div className=" rounded-md shadow-md p-3 col-span-1 space-y-4 relative ">
-            <h1 className="text-xl mb-2 font-semibold text-black-700">
-              Tra cứu sản phẩm
-            </h1>
-            <SearchSanPhamInputs
+            <SanPhamData
               setSanPham={(sanPham: SanPhamFragmentFragment) =>
                 setSanPham((pre) => {
                   const temp = cloneDeep(pre);
@@ -355,7 +350,8 @@ const ThemDonHang: FC = () => {
               }}
             />
           </div>
-          <div className="">
+          <div className="py-10">
+            <h1 className="text-2xl font-bold">Giỏ hàng</h1>
             {sanPhams && sanPhams.length > 0 && (
               <div className=" p-2 bg-white m-1  border-indigo-500 rounded-md border">
                 {sanPhams.map(
@@ -366,9 +362,9 @@ const ThemDonHang: FC = () => {
                     return (
                       <div
                         key={i}
-                        className="flex flex-col p-2 bg-white m-1 relative"
+                        className="flex flex-col  bg-white m-1 relative"
                       >
-                        <div className="absolute top-2 right-1 w-fit h-fit bg-red-500 rounded-full flex items-center justify-center cursor-pointer">
+                        <div className="absolute top-2 right-1 w-fit h-fit bg-red-500 rounded-full flex cursor-pointer">
                           <XIcon
                             onClick={() => {
                               setSanPham((pre) => {
@@ -377,37 +373,31 @@ const ThemDonHang: FC = () => {
                                 return temp;
                               });
                             }}
-                            className="w-3 h-3 text-white cursor-pointer"
+                            className="w-3 h-3  text-white cursor-pointer"
                           />
                         </div>
-                        <div className="flex flex-row space-x-10">
+                        <div className="flex bg-white rounded-xl overflow-hidden  border group cursor-pointer">
                           <div className="flex">
                             {avatar && (
                               <img
-                                className="w-40 h-40"
+                                className="w-24 h-24 object-center"
                                 src={avatar.fileUrl}
                                 alt="image"
                               />
                             )}
                             {!avatar && loaiSanPham == LoaiSanPham.DoNgot && (
-                              <CakeIcon className="w-40 h-40 object-center" />
+                              <CakeIcon className="w-24 h-24 object-center" />
                             )}
                             {!avatar && loaiSanPham == LoaiSanPham.NuocUong && (
-                              <BanIcon className="w-40 h-40 object-center" />
+                              <BanIcon className="w-24 h-24 object-center" />
                             )}
                           </div>
-                          <div className="px-3.5 flex flex flex-col space-y-2">
+                          <div className="flex flex-col justify-center ml-4">
                             <h1>Sản phẩm: {ten}</h1>
                             <h1>
                               Giá:{" "}
                               {(soTien ? soTien : 0) * (!soluong ? 0 : soluong)}
                               (VNĐ)
-                            </h1>
-                            <h1>
-                              Loại sản phẩm:{" "}
-                              {loaiSanPham == LoaiSanPham.DoNgot
-                                ? "Đồ ngọt"
-                                : "Nước uống"}
                             </h1>
                             <div className="flex  space-x-3">
                               <label className="w-fit">Số lượng:</label>
@@ -442,86 +432,81 @@ const ThemDonHang: FC = () => {
                 )}
               </div>
             )}
-          </div>
-
-          <div className="rounded-md shadow-md p-3 col-span-1 h-fit flex flex-col space-y-4 text-gray-800 font-semibold sm:text-sm">
-            <div className="flex flex-row">
-              <SearchVoucherInputs
-                setVoucher={(voucher: VoucherFragmentFragment) =>
-                  setVoucher(voucher)
-                }
-                setSanPham={function (sp: SanPhamFragmentFragment): void {
-                  throw new Error("Function not implemented.");
-                }}
-              />
-              {voucher && (
-                <div className="flex flex-col p-2 bg-white m-1 relative border-indigo-500 rounded-md border text-gray-700 font-medium sm:text-sm">
-                  <div className="absolute top-2 right-1 w-fit h-fit bg-red-500 rounded-full flex items-center justify-center cursor-pointer ">
-                    <XIcon
-                      onClick={() => {
-                        setVoucher(undefined);
-                      }}
-                      className="w-3 h-3 text-white cursor-pointer"
-                    />
+            <div className="rounded-md shadow-md p-3 col-span-1 h-fit flex flex-col space-y-4 text-gray-800 font-semibold sm:text-sm">
+              <div className="flex flex-row">
+                <SearchVoucherInputs
+                  setVoucher={(voucher: VoucherFragmentFragment) =>
+                    setVoucher(voucher)
+                  }
+                  setSanPham={function (sp: SanPhamFragmentFragment): void {
+                    throw new Error("Function not implemented.");
+                  }}
+                />
+                {voucher && (
+                  <div className="flex flex-row w-full p-2 bg-white m-1 relative border-indigo-500 rounded-md border text-gray-700 font-medium sm:text-sm">
+                    <CurrencyEuroIcon className="w-24 h-24 object-center" />
+                    <div className="absolute top-2 right-1 w-fit h-fit bg-red-500 rounded-full flex items-center justify-center cursor-pointer ">
+                      <XIcon
+                        onClick={() => {
+                          setVoucher(undefined);
+                        }}
+                        className="w-3 h-3 text-white cursor-pointer"
+                      />
+                    </div>
+                    <div className="flex-col p-4">
+                      <h1>Mã giảm giá: {voucher.codeVoucher}</h1>
+                      <h1>
+                        Giảm {voucher.voucherAmount}(VNĐ) cho đơn tối thiểu:{" "}
+                        {voucher.minAmount}
+                        (VNĐ)
+                      </h1>
+                      <h1>
+                        Loại:{" "}
+                        {voucher.typeDiscount == TypeDiscount.FreeShip
+                          ? "Giảm giá vận chuyển"
+                          : "Giảm giá sản phẩm"}
+                      </h1>
+                    </div>
                   </div>
-                  <h1>Mã giảm giá: {voucher.codeVoucher}</h1>
-                  <h1>
-                    Giảm {voucher.voucherAmount}(VNĐ) cho đơn tối thiểu:{" "}
-                    {voucher.minAmount}
-                    (VNĐ)
-                  </h1>
-                  <h1>
-                    Loại:{" "}
-                    {voucher.typeDiscount == TypeDiscount.FreeShip
-                      ? "Giảm giá vận chuyển"
-                      : "Giảm giá sản phẩm"}
-                  </h1>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <h1 className="space-x-6 text-xl">
+                  <span>Tổng hóa đơn:</span> <span>{tongtien}(VNĐ)</span>
+                </h1>
+                <div className="px-1">
+                  <FormInput2 id="phiShip" labelText="Phí ship" type="text" />
                 </div>
-              )}
+                <div className="px-1">
+                  <FormInput2 id="diaChi" labelText="Địa chỉ" type="text" />
+                </div>
+                <div className="px-1">
+                  <SelectInput
+                    id="hinhThucMua"
+                    registerReturn={register("hinhThucMua")}
+                    labelText="Hình thức mua(*)"
+                    errorMessage={errors.hinhThucMua?.message}
+                    showedValues={Object.keys(HinhThucMua)}
+                    values={Object.values(HinhThucMua)}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <div className="px-1">
-                <FormInput2
-                  id="phiShip"
-                  labelText="Phí ship"
-                  registerReturn={register("phiShip", { required: true })}
-                  type="text"
-                />
-              </div>
-              <div className="px-1">
-                <FormInput2
-                  id="diaChi"
-                  labelText="Địa chỉ"
-                  registerReturn={register("diaChi", { required: true })}
-                  type="text"
-                />
-              </div>
-              <div className="px-1">
-                <SelectInput
-                  id="hinhThucMua"
-                  registerReturn={register("hinhThucMua")}
-                  labelText="Hình thức mua(*)"
-                  errorMessage={errors.hinhThucMua?.message}
-                  showedValues={Object.keys(HinhThucMua)}
-                  values={Object.values(HinhThucMua)}
-                />
-              </div>
+            <div className="pt-5 flex justify-end space-x-3">
+              <button
+                onClick={() => navigate("/account/show")}
+                type="button"
+                className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Huỷ
+              </button>
+              <LoadingButton
+                loading={loading}
+                text="Tạo đơn hàng"
+                className="w-fit"
+              />
             </div>
           </div>
-        </div>
-        <div className="pt-5 flex justify-end space-x-3">
-          <button
-            onClick={() => navigate("/account/show")}
-            type="button"
-            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Huỷ
-          </button>
-          <LoadingButton
-            loading={loading}
-            text="Tạo đơn hàng"
-            className="w-fit"
-          />
         </div>
       </div>
     </form>

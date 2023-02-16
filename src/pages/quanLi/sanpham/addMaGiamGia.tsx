@@ -5,14 +5,14 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as yup from "yup";
-import { FormInput } from "../../components/form/FormInput";
-import LoadingButton from "../../components/form/LoadingButton";
-import SelectInput2 from "../../components/form/SelectInput2";
+import { FormInput } from "../../../components/form/FormInput";
+import LoadingButton from "../../../components/form/LoadingButton";
+import SelectInput2 from "../../../components/form/SelectInput2";
 import {
   TypeDiscount,
   useThemMaGiamGiaMutation,
-} from "../../graphql/generated/schema";
-import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
+} from "../../../graphql/generated/schema";
+import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
 
 type AddVoucherInputForm = {
   codeVoucher: string;

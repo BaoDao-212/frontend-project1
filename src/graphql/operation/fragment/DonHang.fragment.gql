@@ -1,0 +1,18 @@
+fragment DonHangFragment on DonHang {
+  id
+  nguoiMua {
+    ...UserFragment
+  }
+  hinhThucMua
+  createdAt
+  updatedAt
+  sanPham {
+    ...SanPhamFragment
+  }
+  maGiamGia {
+    ...VoucherFragment
+  }
+  ngayMua
+  tongTienPhaiTra
+  ghiChu
+}

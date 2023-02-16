@@ -9,9 +9,10 @@ import NVBanHangLayout from "./layouts/NV_BanHangLayout";
 import NormalUserLayout from "./layouts/UserLayout";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
-import ThemDonHang from "./pages/banhang/addDonHang";
-import AddVoucher from "./pages/banhang/addMaGiamGia";
-import AddSanPham from "./pages/banhang/addSanPham";
+import ThemDonHang from "./pages/banhang/addDonHang2";
+import AddVoucher from "./pages/quanLi/sanpham/addMaGiamGia";
+import AddSanPham from "./pages/quanLi/sanpham/addSanPham";
+import DanhSachDonHang from "./pages/banhang/xemDanhSachDonHang";
 import DanhSachSanPham from "./pages/banhang/xemDanhSachSanPham";
 import ChangePassword from "./pages/nguoiDan/ChangePassword";
 import NormalUserHomePage from "./pages/nguoiDan/NormalUserHomePage";
@@ -20,6 +21,8 @@ import AddUser from "./pages/quanLi/user/AddUser";
 import EditUser from "./pages/quanLi/user/EditUser";
 import UserDetails from "./pages/quanLi/user/UserDetails";
 import UserManager from "./pages/quanLi/user/UserManager";
+import EditSanPham from "./pages/quanLi/sanpham/editSanPham";
+import SanPhamDetails from "./pages/banhang/sanPhamDetails";
 
 function App() {
   useGetUser();
@@ -42,13 +45,15 @@ function App() {
             <Route path="sp">
               <Route index element={<DanhSachSanPham />} />
               <Route path="add" element={<AddSanPham />} />
+              <Route path="edit/:id" element={<EditSanPham />} />
+              <Route path="detail/:id" element={<SanPhamDetails />} />
             </Route>
             <Route path="voucher">
-              {/* <Route index element={<DanhSachSanPham />} /> */}
               <Route path="add" element={<AddVoucher />} />
             </Route>
           </Route>
           <Route path="/banhang" element={<NVBanHangLayout />}>
+            <Route path="show" element={<DanhSachDonHang />} />
             <Route path="add" element={<ThemDonHang />} />
           </Route>
         </Route>

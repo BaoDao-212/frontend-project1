@@ -6,7 +6,7 @@ type Props = {};
 const UserDropdown = (props: Props) => {
   const user = useReactiveVar(userVar);
   return (
-    <Menu as="div" className="relative inline-block text-left w-full mt-2">
+    <Menu as="div" className="relative inline-block text-left  mt-2">
       <div>
         <Menu.Button className="group w-full bg-gray-100 rounded-md px-2 py-2 text-sm text-left font-medium text-gray-700 hover:bg-gray-200 ">
           <span className="flex w-full justify-between items-center">
