@@ -85,15 +85,6 @@ const AddUser: FC<Props> = () => {
         },
       });
     } catch (err) {
-      // if (sendImage)
-      //   await axios.post(SERVER_URL + "/delete/file", {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     data: {
-      //       storagePath: sendImage.filePath,
-      //     },
-      //   });
     } finally {
       setLoadingMain(false);
     }

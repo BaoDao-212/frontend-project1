@@ -18,8 +18,8 @@ const navigation = [
     current: false,
   },
   {
-    routes: ["/manager"],
-    name: "Quản lý",
+    routes: ["/muahang"],
+    name: "Mua hàng",
     icon: KeyIcon,
     current: false,
   },

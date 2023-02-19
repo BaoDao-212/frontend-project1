@@ -118,7 +118,6 @@ const EditSanPham: FC<Props> = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        // console.log(res);
         sendImage = res.data["fileReference"];
       }
       const { loaiSanPham, motaSanPham, soTien, ten, trangthai } = getValues();
@@ -126,7 +125,7 @@ const EditSanPham: FC<Props> = () => {
         variables: {
           input: {
             loaiSanPham,
-            soTien,
+            soTien: +soTien,
             ten,
             trangThai: trangthai,
             moTaSanPham: motaSanPham,

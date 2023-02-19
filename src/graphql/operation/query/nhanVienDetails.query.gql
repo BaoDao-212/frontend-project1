@@ -1,0 +1,12 @@
+query NhanVienDetails($input: XemThongTinNhanVienChoQuanLiInput!) {
+  xemThongTinNhanVienChoQuanLi(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    nhanVien {
+      ...NhanVienFragment
+    }
+  }
+}

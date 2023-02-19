@@ -1,0 +1,9 @@
+fragment NhanVienFragment on NhanVien {
+  id
+  luong
+  chiNhanh
+  ngayBatDauLam
+  MailLienHe
+  canCuocCongDan
+  caLamViec
+}

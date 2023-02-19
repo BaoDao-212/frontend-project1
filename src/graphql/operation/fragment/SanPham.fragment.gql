@@ -10,5 +10,4 @@ fragment SanPhamFragment on SanPham {
   soTien
   moTaSanPham
   ghiChu
-  
 }

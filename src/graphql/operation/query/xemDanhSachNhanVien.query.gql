@@ -1,0 +1,16 @@
+query DanhSachNhanVien($input: XemDanhSachNhanVienInput!) {
+  xemDanhSachNhanVien(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    nhanViens {
+      ...NhanVienFragment
+    }
+    paginationOutput{
+      totalPages
+      totalResults
+    }
+  }
+}

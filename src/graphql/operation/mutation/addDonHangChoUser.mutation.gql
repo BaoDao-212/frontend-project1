@@ -1,0 +1,9 @@
+mutation ThemDonHangChoUser($input: AddDonHangChoUserInput!) {
+  addDonHangChoUser(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+  }
+}

@@ -17,13 +17,19 @@ import Narbar from "../components/pages/narbar_NV.tsx/narbar";
 
 const navigation = [
   {
-    routes: ["/manager/nv", RegExp("^/manager/nv/*")],
-    name: "Quản lí bán hàng",
+    routes: ["/banhang/add", RegExp("^/banhang/add/*")],
+    name: "Đặt hàng",
     icon: UserGroupIcon,
     current: false,
   },
   {
-    routes: ["/"],
+    routes: ["/manager/sp"],
+    name: "Thực đơn",
+    icon: MenuAlt1Icon,
+    current: false,
+  },
+  {
+    routes: ["/thongtin"],
     name: "Cá nhân",
     icon: UserCircleIcon,
     current: false,
@@ -44,12 +50,7 @@ const NVBanHangLayout = (props: Props) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = useReactiveVar(userVar);
   useEffect(() => {
-    if (
-      user &&
-      ![VaitroNguoiDung.Admin, VaitroNguoiDung.QuanLy].includes(
-        user.vaiTroNguoiDung
-      )
-    )
+    if (user && ![VaitroNguoiDung.NhanVien].includes(user.vaiTroNguoiDung))
       navigate("/");
   }, [user]);
   useEffect(() => {

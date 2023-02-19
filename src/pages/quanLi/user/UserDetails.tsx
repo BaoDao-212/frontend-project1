@@ -1,9 +1,13 @@
+import { CurrencyEuroIcon } from "@heroicons/react/outline";
 import { UserIcon } from "@heroicons/react/solid";
 import { FC, Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loading from "../../../components/Loading";
-import { useUserDetailsQuery } from "../../../graphql/generated/schema";
+import {
+  TypeDiscount,
+  useUserDetailsQuery,
+} from "../../../graphql/generated/schema";
 import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
 const InfoField: FC<{
   title: string;
@@ -52,7 +56,7 @@ const UserDetails: FC<Props> = () => {
     },
   });
   const user = data?.xemThongTinNguoiDungChoQuanLi.user;
-
+  const vouchers = user?.maGiamGia;
   return (
     <Fragment>
       {loading && <Loading />}
@@ -60,7 +64,7 @@ const UserDetails: FC<Props> = () => {
         <div className="overflow-hidden bg-white py-4 pr-10">
           <div className="pl-4 py-5 sm:px-6 mt-2 ">
             <h3 className="text-3xl font-bold leading-6 text-indigo-700 mb-6 pb-6 border-b border-gray-300">
-              Thông tin nhân khẩu
+              Thông tin người dùng
             </h3>
           </div>
           <div className="grid grid-cols-12 pl-6">
@@ -82,19 +86,49 @@ const UserDetails: FC<Props> = () => {
               {[
                 ["Họ tên", user.ten],
                 ["Số điện thoại", user.soDienThoai],
+                ["Giới tính", user.gioiTinh],
+                ["Vai trò người dùng", user.vaiTroNguoiDung],
+                [
+                  "Số lượng đơn hàng đã mua",
+                  data?.xemThongTinNguoiDungChoQuanLi.soLuongDonHang,
+                ],
+                [
+                  "Tổng số tiền đã chi ra",
+                  data?.xemThongTinNguoiDungChoQuanLi.tongTienDaMua,
+                ],
               ].map(([title, value], i) => {
                 let gray = true;
                 if (i % 2 == 0) gray = false;
                 return (
                   <InfoField
                     key={i}
-                    title={title || ""}
+                    title={title?.toString() || ""}
                     gray={gray}
-                    value={value}
+                    value={value?.toString()}
                   />
                 );
               })}
             </div>
+            {vouchers &&
+              vouchers.map((voucher) => (
+                <div className="flex flex-row w-full p-2 bg-white m-1 relative border-indigo-500 rounded-md border text-gray-700 font-medium sm:text-sm">
+                  <CurrencyEuroIcon className="w-24 h-24 object-center" />
+                  <div className="flex-col p-4">
+                    <h1>Mã giảm giá: {voucher.codeVoucher}</h1>
+                    <h1>
+                      Giảm {voucher.voucherAmount}(VNĐ) cho đơn tối thiểu:{" "}
+                      {voucher.minAmount}
+                      (VNĐ)
+                    </h1>
+                    <h1>
+                      Loại:{" "}
+                      {voucher.typeDiscount == TypeDiscount.FreeShip
+                        ? "Giảm giá vận chuyển"
+                        : "Giảm giá sản phẩm"}
+                    </h1>
+                  </div>
+                </div>
+              ))}
           </div>
           <div className="mt-6 flex justify-end">
             <button

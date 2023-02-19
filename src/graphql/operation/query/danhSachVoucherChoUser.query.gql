@@ -1,0 +1,12 @@
+query DanhSachVoucherChoUser {
+  xemDanhSachMaGiamGiaChoUser {
+    ok
+    error {
+      mainReason
+      message
+    }
+    maGiamGias {
+      ...VoucherFragment
+    }
+  }
+}

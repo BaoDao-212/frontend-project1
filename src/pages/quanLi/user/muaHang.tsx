@@ -14,11 +14,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 import { number } from "yup/lib/locale";
-import { FormInput2 } from "../../components/form/FormInput2";
-import LoadingButton from "../../components/form/LoadingButton";
-import SelectInput from "../../components/form/SelectInput";
-import TextSearchInput from "../../components/form/TextSearchInput";
-import PaginationNav from "../../components/PaginationNav";
+import { FormInput2 } from "../../../components/form/FormInput2";
+import LoadingButton from "../../../components/form/LoadingButton";
+import SelectInput from "../../../components/form/SelectInput";
+import TextSearchInput from "../../../components/form/TextSearchInput";
+import PaginationNav from "../../../components/PaginationNav";
 import {
   HinhThucMua,
   LoaiSanPham,
@@ -26,12 +26,14 @@ import {
   TrangThaiDonHang,
   TypeDiscount,
   useDanhSachSanPhamLazyQuery,
+  useDanhSachVoucherChoUserLazyQuery,
   useDanhSachVoucherLazyQuery,
-  useThemDonHangMutation,
+  useThemDonHangChoUserMutation,
   VoucherFragmentFragment,
-} from "../../graphql/generated/schema";
-import { loadingWhite } from "../../images";
-import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
+} from "../../../graphql/generated/schema";
+import { loadingWhite } from "../../../images";
+import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
+
 type ByState = {
   tenSanPham?: string;
 };
@@ -147,8 +149,7 @@ const SanPhamData: FC<Props> = ({ setSanPham }) => {
   );
 };
 const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
-  const [CodeVoucher, setCodeVoucher] = useState<string>("");
-  const [getUsers, { loading }] = useDanhSachVoucherLazyQuery();
+  const [getUsers, { loading }] = useDanhSachVoucherChoUserLazyQuery();
   const [results, setResults] = useState<VoucherFragmentFragment[]>([]);
   const [canShowResults, setCanShowResults] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -156,7 +157,7 @@ const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
     // @ts-ignore
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
-        setCanShowResults(false);
+        // setCanShowResults(false);
       }
     };
     document.addEventListener("click", handleClickOutside, true);
@@ -167,18 +168,10 @@ const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       getUsers({
-        variables: {
-          input: {
-            codeVoucher: CodeVoucher,
-            paginationInput: {
-              page: 1,
-              resultsPerPage: 10,
-            },
-          },
-        },
         onCompleted: (data) => {
-          const { xemDanhSachMaGiamGia } = data;
-          setResults(Object(xemDanhSachMaGiamGia.maGiamGias) || []);
+          const { xemDanhSachMaGiamGiaChoUser } = data;
+          setResults(Object(xemDanhSachMaGiamGiaChoUser.maGiamGias) || []);
+          setCanShowResults(true);
         },
         onError: (error) => {
           const msg = getApolloErrorMessage(error);
@@ -191,8 +184,7 @@ const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
       });
     }, 500);
     return () => clearTimeout(timer);
-  }, [CodeVoucher]);
-
+  }, []);
   return (
     <div className="flex flex-col grid-rows-2 space-y-3 mx-1 mb-2 p-3 ">
       <div className="flex flex-col space-y-2 relative">
@@ -200,13 +192,6 @@ const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
           Mã giảm giá
         </label>
         <div ref={ref}>
-          <input
-            className="appearance-none block w-30 h-8 px-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            type="text"
-            value={CodeVoucher}
-            onChange={(e) => setCodeVoucher(e.target.value)}
-            onFocus={() => setCanShowResults(true)}
-          />
           <div className="absolute top-full left-0 w-full flex flex-col space-y-1 rounded-md shadow-md bg-gray-200 z-10 ">
             {canShowResults &&
               results.length > 0 &&
@@ -221,9 +206,8 @@ const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
                       onClick={() => {
                         setVoucher(results[i]);
                         setCanShowResults(false);
-                        setCodeVoucher("");
                       }}
-                      className="p-2 bg-white border border-indigo-500 rounded-md m-1 cursor-pointer hover:bg-indigo-500 text-gray-700 font-medium sm:text-sm"
+                      className="p-2 w-40 bg-white border border-indigo-500 rounded-md m-1 cursor-pointer hover:bg-indigo-500 text-gray-700 font-medium sm:text-sm"
                     >
                       <h1>Mã giảm giá: {codeVoucher}</h1>
                       <h1>
@@ -247,7 +231,7 @@ const SearchVoucherInputs: FC<Props> = ({ setVoucher }) => {
   );
 };
 
-const ThemDonHang: FC = () => {
+const ThemDonHangChoUser: FC = () => {
   const navigate = useNavigate();
   const [sanPhams, setSanPham] = useState<
     { sanPham: SanPhamFragmentFragment; soluong: number | null }[]
@@ -261,7 +245,7 @@ const ThemDonHang: FC = () => {
     handleSubmit,
   } = useForm<{
     diaChi: string;
-    phiShip: number;
+    soDienThoai: string;
     hinhThucMua: HinhThucMua;
   }>({
     mode: "onBlur",
@@ -270,19 +254,17 @@ const ThemDonHang: FC = () => {
   sanPhams.forEach((sp) => {
     tongtien += sp.sanPham.soTien! * sp.soluong! || 0;
   });
-  const phiship = getValues("phiShip") || 0;
-  tongtien += phiship;
   if (tongtien >= voucher?.minAmount!) {
     tongtien -= voucher?.voucherAmount!;
   }
-  const [ThemDonHang, { loading }] = useThemDonHangMutation();
+  const [ThemDonHangChoUser, { loading }] = useThemDonHangChoUserMutation();
 
   const submitHandler = async () => {
     if (!sanPhams) {
       toast.error("Đơn hàng không hợp lệ vui lòng thêm sản phẩm");
       return;
     }
-    ThemDonHang({
+    ThemDonHangChoUser({
       variables: {
         input: {
           sanPham: sanPhams.map((tv) => ({
@@ -290,21 +272,21 @@ const ThemDonHang: FC = () => {
             numberSanPham: tv.soluong!,
           })),
           diaChi: getValues("diaChi") || "",
-          PhiShip: +getValues("phiShip") || 0,
+          soDienThoai: +getValues("soDienThoai") | 0,
           hinhThucMua: getValues("hinhThucMua"),
           codeVoucher: voucher?.codeVoucher! || undefined,
           trangThaiDonHang: TrangThaiDonHang.ChoPheDuyet,
         },
       },
       onCompleted: (data) => {
-        if (data.addDonHang.ok) {
-          toast.success("Đơn hàng khởi tạo thành công");
+        if (data.addDonHangChoUser.ok) {
+          toast.success("Đơn hàng đang chờ phê duyệt");
           setSanPham([]);
           setVoucher(undefined);
           reset();
           return;
         }
-        const msg = data.addDonHang.error?.message;
+        const msg = data.addDonHangChoUser.error?.message;
         if (msg) {
           toast.error(msg);
           return;
@@ -328,7 +310,7 @@ const ThemDonHang: FC = () => {
     >
       <div className="flex flex-col col-span-1">
         <h3 className="leading-6 font-extrabold text-gray-900 text-3xl mb-8">
-          Đặt hàng
+          Mua hàng
         </h3>
         <div className="grid grid-rows-2 gap-x-6 ">
           <div className=" rounded-md shadow-md p-3 col-span-1 space-y-4 relative ">
@@ -471,14 +453,6 @@ const ThemDonHang: FC = () => {
                           ? "Giảm giá vận chuyển"
                           : "Giảm giá sản phẩm"}
                       </h1>
-                      <h1>
-                        Ngày hết hạn :{" "}
-                        {new Date(voucher.endDate).toLocaleDateString("vi", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })}
-                      </h1>
                     </div>
                   </div>
                 )}
@@ -489,7 +463,11 @@ const ThemDonHang: FC = () => {
                   <span>{tongtien}(VNĐ)</span>
                 </h1>
                 <div className="px-1">
-                  <FormInput2 id="phiShip" labelText="Phí ship" type="text" />
+                  <FormInput2
+                    id="soDienThoai"
+                    labelText="Số điện thoại liên hệ"
+                    type="text"
+                  />
                 </div>
                 <div className="px-1">
                   <FormInput2 id="diaChi" labelText="Địa chỉ" type="text" />
@@ -508,7 +486,7 @@ const ThemDonHang: FC = () => {
             </div>
             <div className="pt-5 flex justify-end space-x-3">
               <button
-                onClick={() => navigate("/account/show")}
+                onClick={() => navigate("/")}
                 type="button"
                 className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
@@ -516,7 +494,7 @@ const ThemDonHang: FC = () => {
               </button>
               <LoadingButton
                 loading={loading}
-                text="Tạo đơn hàng"
+                text="Mua hàng"
                 className="w-fit"
               />
             </div>
@@ -526,4 +504,4 @@ const ThemDonHang: FC = () => {
     </form>
   );
 };
-export default ThemDonHang;
+export default ThemDonHangChoUser;

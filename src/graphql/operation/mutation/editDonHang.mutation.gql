@@ -1,0 +1,9 @@
+mutation EditDonHang($input: EditDonHangInput!) {
+  editDonHang(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+  }
+}

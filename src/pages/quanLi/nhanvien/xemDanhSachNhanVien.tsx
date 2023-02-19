@@ -1,83 +1,88 @@
 import { UserCircleIcon } from "@heroicons/react/outline";
 import { Fragment, useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 import { toast } from "react-toastify";
-import DateSearchInput from "../../components/form/DateSearchInput";
-import { FormInput } from "../../components/form/FormInput";
-import SelectInput2 from "../../components/form/SelectInput2";
-import TextSearchInput from "../../components/form/TextSearchInput";
-import Loading from "../../components/Loading";
+import TextSearchInput from "../../../components/form/TextSearchInput";
+import Loading from "../../../components/Loading";
 import {
-  LoaiSanPham,
-  TrangThaiDonHang,
-  useDanhSachDonHangLazyQuery,
-  useEditDonHangMutation,
-} from "../../graphql/generated/schema";
-import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
+  CaLamViec,
+  useDanhSachNhanVienLazyQuery,
+} from "../../../graphql/generated/schema";
+import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
 
 type ByState = {
-  ngayMua?: Date;
+  canCuocCongDan?: string;
+  soDienThoai?: string;
 };
-type Props = {};
-const DanhSachDonHang = (props: Props) => {
-  const navigate = useNavigate();
-  const [getDonHangs, { data: dhData, loading }] = useDanhSachDonHangLazyQuery({
-    onCompleted(data) {
-      const { xemDanhSachDonHang } = data;
-      console.log(xemDanhSachDonHang);
-      if (xemDanhSachDonHang.error) {
-        toast.error(xemDanhSachDonHang.error.message);
-        return;
-      }
-    },
-    onError(err) {
-      const msg = getApolloErrorMessage(err);
-      if (msg) {
-        toast.error(msg);
-        return;
-      }
-      toast.error("Lỗi xảy ra, thử lại sau");
-    },
-  });
 
-  const [editDonHang] = useEditDonHangMutation();
+type Props = {};
+const DanhSachNhanVien = (props: Props) => {
+  const navigate = useNavigate();
+  const [getNhanViens, { data: spData, loading }] =
+    useDanhSachNhanVienLazyQuery({
+      onCompleted(data) {
+        const { xemDanhSachNhanVien } = data;
+        if (xemDanhSachNhanVien.error) {
+          toast.error(xemDanhSachNhanVien.error.message);
+          return;
+        }
+      },
+      onError(err) {
+        const msg = getApolloErrorMessage(err);
+        if (msg) {
+          toast.error(msg);
+          return;
+        }
+        toast.error("Lỗi xảy ra, thử lại sau");
+      },
+    });
+  const [byState, setByState] = useState<ByState>({
+    canCuocCongDan: undefined,
+    soDienThoai: undefined,
+  });
   const [page, setPage] = useState<number>(1);
   useEffect(() => {
-    getDonHangs({
+    let { canCuocCongDan, soDienThoai } = byState;
+    getNhanViens({
       variables: {
         input: {
+          canCuocCongDan,
+          soDienThoai,
           paginationInput: {
-            page: 1,
+            page,
             resultsPerPage: 16,
           },
         },
       },
     });
-  }, []);
-
-  const donHangs = dhData?.xemDanhSachDonHang.DonHangs;
+  }, [byState, page]);
+  const NhanViens = spData?.xemDanhSachNhanVien.nhanViens;
   const columns = useMemo(() => {
     return [
       {
-        Header: "Mã đơn",
-        // @ts-ignore
-        accessor: (row) => row["id"],
-      },
-      {
-        Header: "Tổng hóa đơn",
+        Header: "Liên hệ",
         // @ts-ignore
         accessor: (row) => {
-          return row["tongTienPhaiTra"];
+          return row["MailLienHe"];
         },
       },
       {
-        Header: "Trạng thái",
+        Header: "Chi nhánh",
         // @ts-ignore
         accessor: (row) => {
-          return row["trangThaiDonHang"] == TrangThaiDonHang.Oke
-            ? "Oke"
-            : "Đang chờ phê duyệt";
+          return row["chiNhanh"];
+        },
+      },
+      {
+        Header: "Ca làm việc",
+        // @ts-ignore
+        accessor: (row) => {
+          return row["caLamViec"] == CaLamViec.Chieu
+            ? "Chiều"
+            : row["caLamViec"] == CaLamViec.Toi
+            ? "Tối"
+            : "Sáng";
         },
       },
       {
@@ -91,7 +96,7 @@ const DanhSachDonHang = (props: Props) => {
             <div className="space-x-2">
               <button
                 onClick={() => {
-                  navigate(`/banhang/donhang/${data["id"]}`);
+                  navigate(`/manager/nv/detail/${data["id"]}`);
                 }}
                 className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
               >
@@ -99,33 +104,11 @@ const DanhSachDonHang = (props: Props) => {
               </button>
               <button
                 onClick={() => {
-                  editDonHang({
-                    variables: {
-                      input: {
-                        donHangId: +data["id"],
-                      },
-                    },
-                    onCompleted(data) {
-                      const { editDonHang } = data;
-                      console.log(editDonHang);
-                      if (editDonHang.error) {
-                        toast.error(editDonHang.error.message);
-                        return;
-                      }
-                    },
-                    onError(err) {
-                      const msg = getApolloErrorMessage(err);
-                      if (msg) {
-                        toast.error(msg);
-                        return;
-                      }
-                      toast.error("Lỗi xảy ra, thử lại sau");
-                    },
-                  });
+                  navigate(`/manager/nv/edit/${data["id"]}`);
                 }}
                 className="font-semibold text-indigo-500 cursor-pointer hover:text-indigo-700 p-1 hover:bg-indigo-300 text-left rounded transition w-fit"
               >
-                Phê duyệt đơn hàng
+                Cập nhật
               </button>
             </div>
           );
@@ -133,9 +116,10 @@ const DanhSachDonHang = (props: Props) => {
       },
     ];
   }, []);
-  const data = useMemo(() => donHangs || [], [donHangs]);
+  const data = useMemo(() => NhanViens || [], [NhanViens]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ data, columns });
+  console.log(spData);
   return (
     <Fragment>
       <main className="flex-1 mb-8">
@@ -147,17 +131,26 @@ const DanhSachDonHang = (props: Props) => {
             </h1>
           </div>
           <div className="mt-4 sm:mt-0 sm:ml-16 flex space-x-3">
-            <FormInput id="ngayMua" labelText="Ngày mua(*)" type={"date"} />
+            <TextSearchInput
+              labelText="Căn cước công dân"
+              setText={(v) =>
+                setByState((pre) => ({ ...pre, canCuocCongDan: v }))
+              }
+            />
+            <TextSearchInput
+              labelText="Số điện thoại"
+              setText={(v) => setByState((pre) => ({ ...pre, soDienThoai: v }))}
+            />
             <button
-              onClick={() => navigate("/banhang/add")}
-              className="w-fit h-fit flex my-auto justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+              onClick={() => navigate("/manager/nv/add")}
+              className=" w-fit h-fit flex my-auto justify-center py-4 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
             >
               Thêm mới
             </button>
           </div>
         </div>
         {loading && <Loading />}
-        {!loading && dhData && (
+        {!loading && spData && (
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="inline-block min-w-full align-middle">
@@ -213,4 +206,4 @@ const DanhSachDonHang = (props: Props) => {
   );
 };
 
-export default DanhSachDonHang;
+export default DanhSachNhanVien;

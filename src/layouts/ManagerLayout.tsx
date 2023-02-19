@@ -4,7 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { userVar } from "../apollo/reactiveVar/loginStatusVar";
 import { VaitroNguoiDung } from "../graphql/generated/schema";
 
-import { MenuAlt1Icon, UserGroupIcon } from "@heroicons/react/outline";
+import { CollectionIcon, DocumentRemoveIcon, MenuAlt1Icon, UserGroupIcon } from "@heroicons/react/outline";
 import {
   BookOpenIcon,
   ChartSquareBarIcon,
@@ -19,6 +19,30 @@ const navigation = [
     routes: ["/manager/users", RegExp("^/manager/users/*")],
     name: "Quản lí người dùng",
     icon: UserGroupIcon,
+    current: false,
+  },
+  {
+    routes: ["/manager/nv", RegExp("^/manager/nv/*")],
+    name: "Quản lí nhân viên",
+    icon: UserGroupIcon,
+    current: false,
+  },
+  {
+    routes: ["/manager/sp", RegExp("^/manager/sp/*")],
+    name: "Quản lí sản phẩm",
+    icon: DocumentRemoveIcon,
+    current: false,
+  },
+  // {
+  //   routes: ["/banhang/add", RegExp("^/banhang/*")],
+  //   name: "Bán hàng",
+  //   icon: DocumentRemoveIcon,
+  //   current: false,
+  // },
+  {
+    routes: ["/voucher/add", RegExp("^/voucher/*")],
+    name: "Thêm mã giảm giá",
+    icon: CollectionIcon,
     current: false,
   },
   {

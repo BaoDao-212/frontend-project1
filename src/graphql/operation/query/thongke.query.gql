@@ -1,0 +1,18 @@
+query ThongKe {
+  ThongKeChoQuanLy {
+    ok
+    error {
+      mainReason
+      message
+    }
+    soNguoiDangKi
+    soDonHangThangNay
+    soNhanVien
+    soSanPham
+    doanhThuTrongThang
+    sanPhamBanChay {
+      ...SanPhamFragment
+    }
+    tienLuongCuaTatCaNhanVien
+  }
+}

@@ -1,0 +1,12 @@
+query DonHangDetails($input: XemThongTinDonHangChoQuanLiInput!) {
+  xemThongTinDonHangChoQuanLi(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+    DonHang {
+      ...DonHangFragment
+    }
+  }
+}

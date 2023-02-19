@@ -2,13 +2,9 @@ import { BanIcon } from "@heroicons/react/outline";
 import { FC, Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import Loading from "../../components/Loading";
-import {
-  LoaiSanPham,
-  TrangThai,
-  useSanPhamDetailsQuery,
-} from "../../graphql/generated/schema";
-import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
+import Loading from "../../../components/Loading";
+import { useNhanVienDetailsQuery } from "../../../graphql/generated/schema";
+import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
 const InfoField: FC<{
   title: string;
   value?: string | null;
@@ -30,19 +26,19 @@ const InfoField: FC<{
 };
 
 type Props = {};
-const SanPhamDetails: FC<Props> = () => {
+const NhanVienDetails: FC<Props> = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const { data, loading } = useSanPhamDetailsQuery({
+  const { data, loading } = useNhanVienDetailsQuery({
     variables: {
       input: {
-        SanPhamId: params.id!,
+        NhanVienId: params.id!,
       },
     },
     onCompleted(data) {
-      const { xemThongTinSanPham } = data;
-      if (xemThongTinSanPham.error) {
-        toast.error(xemThongTinSanPham.error.message);
+      const { xemThongTinNhanVienChoQuanLi } = data;
+      if (xemThongTinNhanVienChoQuanLi.error) {
+        toast.error(xemThongTinNhanVienChoQuanLi.error.message);
         return;
       }
     },
@@ -55,50 +51,27 @@ const SanPhamDetails: FC<Props> = () => {
       toast.error("Lỗi xảy ra, thử lại sau");
     },
   });
-  const sanPham = data?.xemThongTinSanPham.sanpham;
+  const NhanVien = data?.xemThongTinNhanVienChoQuanLi.nhanVien;
 
   return (
     <Fragment>
       {loading && <Loading />}
-      {!loading && sanPham && (
+      {!loading && NhanVien && (
         <div className="overflow-hidden bg-white py-4 pr-10">
           <div className="pl-4 py-5 sm:px-6 mt-2 ">
             <h3 className="text-3xl font-bold leading-6 text-indigo-700 mb-6 pb-6 border-b border-gray-300">
-              Thông tin sản phẩm
+              Thông tin nhân viên
             </h3>
           </div>
           <div className="grid grid-cols-12 pl-6">
-            <div className="col-span-4 flex flex-col space-y-3 items-center">
-              <h1 className="font-semibold text-indigo-700 text-lg">
-                Ảnh minh họa
-              </h1>
-              {!sanPham.avatar?.fileUrl && (
-                <BanIcon className="w-72 h-96 mx-auto mt-1 rounded bg-cover bg-center shadow-md" />
-              )}
-              {sanPham.avatar && (
-                <img
-                  src={sanPham.avatar?.fileUrl}
-                  className="w-72 h-96 mx-auto mt-1 rounded bg-cover bg-center shadow-md"
-                />
-              )}
-            </div>
             <div className="col-span-8 shadow-md rounded-sm">
               {[
-                ["Tên sản phẩm", sanPham.ten],
-                ["Giá tiền", sanPham.soTien, "(VNĐ)"],
-                ["Mô tả sản phẩm", sanPham.moTaSanPham],
-                [
-                  "Loại sản phẩm",
-                  sanPham.loaiSanPham == LoaiSanPham.DoNgot
-                    ? "Đồ ngọt"
-                    : "Nước uống",
-                ],
-                [
-                  "Trạng thái",
-                  sanPham?.trangthai! == TrangThai.NgungBan
-                    ? "Ngưng bán"
-                    : "Đang bán",
-                ],
+                ["Căn cước công dân", NhanVien.canCuocCongDan],
+                ["Lương ", NhanVien.luong, "(VNĐ)"],
+                ["Ca làm việc", NhanVien.caLamViec, "(VNĐ)"],
+                ["Email liên hệ ", NhanVien.MailLienHe, "(VNĐ)"],
+                ["Ngày bắt đầu làm", NhanVien.ngayBatDauLam],
+                ["Chi nhánh", NhanVien.chiNhanh],
               ].map(([title, value], i) => {
                 let gray = true;
                 if (i % 2 == 0) gray = false;
@@ -115,7 +88,7 @@ const SanPhamDetails: FC<Props> = () => {
           </div>
           <div className="mt-6 flex justify-end">
             <button
-              onClick={() => navigate("/manager")}
+              onClick={() => navigate("/manager/nv")}
               className="px-5 py-2 bg-indigo-600 rounded text-white font-semibold hover:bg-indigo-700"
             >
               Trở về
@@ -126,4 +99,4 @@ const SanPhamDetails: FC<Props> = () => {
     </Fragment>
   );
 };
-export default SanPhamDetails;
+export default NhanVienDetails;

@@ -1,0 +1,9 @@
+mutation EditNhanVien($input: EditNhanVienInput!) {
+  editNhanVien(input: $input) {
+    ok
+    error {
+      mainReason
+      message
+    }
+  }
+}

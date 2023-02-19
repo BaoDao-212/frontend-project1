@@ -9,7 +9,6 @@ import { logout, userVar } from "../../../apollo/reactiveVar/loginStatusVar";
 import { classNames } from "../../../common/utilFunctions";
 import { VaitroNguoiDung } from "../../../graphql/generated/schema";
 import { NavState } from "../../../layouts/ManagerLayout";
-import UserDropDown from "./userdropdown";
 
 const checkMatchBaseRoutes = (route: string) => {
   const routes = ["/", "/thongtin", "/changepassword", "/account/user"];
@@ -108,7 +107,7 @@ const Narbar = ({ navState, setNavState }: Props) => {
               [VaitroNguoiDung.NhanVien].includes(user.vaiTroNguoiDung) &&
               checkMatchBaseRoutes(location.pathname) && (
                 <button
-                  onClick={() => navigate("/banhang")}
+                  onClick={() => navigate("/banhang/add")}
                   className={classNames(
                     "text-gray-700 hover:text-gray-900 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md w-full"
                   )}

@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGetUser } from "./hooks/useGetUser";
-import KeToanLayout from "./layouts/KeToanLayout";
 import LoginProtect from "./layouts/LoginProtect";
 import ManagerLayout from "./layouts/ManagerLayout";
 import NVBanHangLayout from "./layouts/NV_BanHangLayout";
@@ -23,6 +22,13 @@ import UserDetails from "./pages/quanLi/user/UserDetails";
 import UserManager from "./pages/quanLi/user/UserManager";
 import EditSanPham from "./pages/quanLi/sanpham/editSanPham";
 import SanPhamDetails from "./pages/banhang/sanPhamDetails";
+import DanhSachNhanVien from "./pages/quanLi/nhanvien/xemDanhSachNhanVien";
+import AddNhanVien from "./pages/quanLi/nhanvien/addNhanVien";
+import ThongKe from "./pages/quanLi/user/thongke";
+import ThemDonHangChoUser from "./pages/quanLi/user/muaHang";
+import DonHangDetails from "./pages/banhang/donHangDetails";
+import NhanVienDetails from "./pages/quanLi/nhanvien/nhanVienDetails";
+import EditNhanVien from "./pages/quanLi/nhanvien/editNhanVien";
 
 function App() {
   useGetUser();
@@ -34,8 +40,10 @@ function App() {
             <Route index element={<NormalUserHomePage />} />
             <Route path="thongtin" element={<UserDetailsForUsers />} />
             <Route path="changepassword" element={<ChangePassword />} />
+            <Route path="muahang" element={<ThemDonHangChoUser />} />
           </Route>
           <Route path="/manager" element={<ManagerLayout />}>
+            <Route index element={<ThongKe />} />
             <Route path="users">
               <Route index element={<UserManager />} />
               <Route path="add" element={<AddUser />} />
@@ -48,11 +56,18 @@ function App() {
               <Route path="edit/:id" element={<EditSanPham />} />
               <Route path="detail/:id" element={<SanPhamDetails />} />
             </Route>
-            <Route path="voucher">
-              <Route path="add" element={<AddVoucher />} />
+            <Route path="nv">
+              <Route index element={<DanhSachNhanVien />} />
+              <Route path="add" element={<AddNhanVien />} />
+              <Route path="edit/:id" element={<EditNhanVien />} />
+              <Route path="detail/:id" element={<NhanVienDetails />} />
             </Route>
           </Route>
+          <Route path="voucher">
+            <Route path="add" element={<AddVoucher />} />
+          </Route>
           <Route path="/banhang" element={<NVBanHangLayout />}>
+            <Route path="donhang/:id" element={<DonHangDetails />} />
             <Route path="show" element={<DanhSachDonHang />} />
             <Route path="add" element={<ThemDonHang />} />
           </Route>

@@ -8,4 +8,7 @@ fragment UserFragment on User {
   soDienThoai
   vaiTroNguoiDung
   ten
+  maGiamGia{
+    ...VoucherFragment
+  }
 }
