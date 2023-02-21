@@ -33,6 +33,12 @@ const navigation = [
     icon: DocumentRemoveIcon,
     current: false,
   },
+  {
+    routes: ["donhang/show", RegExp("^/donhang/show/*")],
+    name: "Quản lí đơn hàng",
+    icon: DocumentRemoveIcon,
+    current: false,
+  },
   // {
   //   routes: ["/banhang/add", RegExp("^/banhang/*")],
   //   name: "Bán hàng",

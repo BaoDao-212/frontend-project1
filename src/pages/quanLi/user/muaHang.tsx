@@ -467,10 +467,18 @@ const ThemDonHangChoUser: FC = () => {
                     id="soDienThoai"
                     labelText="Số điện thoại liên hệ"
                     type="text"
+                    registerReturn={register("soDienThoai")}
+                    errorMessage={errors.soDienThoai?.message}
                   />
                 </div>
                 <div className="px-1">
-                  <FormInput2 id="diaChi" labelText="Địa chỉ" type="text" />
+                  <FormInput2
+                    id="diaChi"
+                    labelText="Địa chỉ"
+                    type="text"
+                    registerReturn={register("diaChi")}
+                    errorMessage={errors.diaChi?.message}
+                  />
                 </div>
                 <div className="px-1">
                   <SelectInput

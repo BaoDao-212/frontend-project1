@@ -2,13 +2,10 @@ import { BanIcon, CakeIcon } from "@heroicons/react/outline";
 import { FC, Fragment } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import Loading from "../../components/Loading";
-import {
-  LoaiSanPham,
-  TrangThaiDonHang,
-  useDonHangDetailsQuery,
-} from "../../graphql/generated/schema";
-import { getApolloErrorMessage } from "../../utils/getApolloErrorMessage";
+import Loading from "../../../components/Loading";
+import { LoaiSanPham, TrangThaiDonHang, useDonHangDetailsQuery } from "../../../graphql/generated/schema";
+import { getApolloErrorMessage } from "../../../utils/getApolloErrorMessage";
+
 const InfoField: FC<{
   title: string;
   value?: string | null;
@@ -30,7 +27,7 @@ const InfoField: FC<{
 };
 
 type Props = {};
-const DonHangDetails: FC<Props> = () => {
+const DonHangDetails2: FC<Props> = () => {
   const navigate = useNavigate();
   const params = useParams();
 
@@ -143,7 +140,7 @@ const DonHangDetails: FC<Props> = () => {
           </div>
           <div className="mt-6 flex justify-end">
             <button
-              onClick={() => navigate("/banhang/show")}
+              onClick={() => navigate("/manager/donhang/show")}
               className="px-5 py-2 bg-indigo-600 rounded text-white font-semibold hover:bg-indigo-700"
             >
               Trở về
@@ -154,4 +151,4 @@ const DonHangDetails: FC<Props> = () => {
     </Fragment>
   );
 };
-export default DonHangDetails;
+export default DonHangDetails2;

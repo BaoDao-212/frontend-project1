@@ -16,4 +16,5 @@ fragment DonHangFragment on DonHang {
   tongTienPhaiTra
   ghiChu
   trangThaiDonHang
+  soluong
 }

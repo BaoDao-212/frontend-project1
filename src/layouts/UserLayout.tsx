@@ -1,4 +1,4 @@
-import { ChartPieIcon, MenuAlt1Icon } from "@heroicons/react/outline";
+import { ChartPieIcon, DocumentRemoveIcon, MenuAlt1Icon } from "@heroicons/react/outline";
 import { BookOpenIcon, KeyIcon, UserCircleIcon } from "@heroicons/react/solid";
 import { cloneDeep } from "lodash";
 import { Fragment, SVGProps, useEffect, useState } from "react";
@@ -21,6 +21,12 @@ const navigation = [
     routes: ["/muahang"],
     name: "Mua hàng",
     icon: KeyIcon,
+    current: false,
+  },
+  {
+    routes: ["donhang/show", RegExp("^/donhang/show/*")],
+    name: "Quản lí đơn hàng",
+    icon: DocumentRemoveIcon,
     current: false,
   },
 ];

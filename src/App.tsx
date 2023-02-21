@@ -29,6 +29,10 @@ import ThemDonHangChoUser from "./pages/quanLi/user/muaHang";
 import DonHangDetails from "./pages/banhang/donHangDetails";
 import NhanVienDetails from "./pages/quanLi/nhanvien/nhanVienDetails";
 import EditNhanVien from "./pages/quanLi/nhanvien/editNhanVien";
+import DonHangDetails2 from "./pages/quanLi/donhang/donHangDetails";
+import DanhSachDonHangChoQuanLi from "./pages/quanLi/donhang/xemDanhSachDonHang";
+import DanhSachDonHangChoUser from "./pages/nguoiDan/donhang/xemDanhSachDonHang";
+import DonHangDetailsCHoUser from "./pages/nguoiDan/donhang/donHangDetails";
 
 function App() {
   useGetUser();
@@ -41,9 +45,18 @@ function App() {
             <Route path="thongtin" element={<UserDetailsForUsers />} />
             <Route path="changepassword" element={<ChangePassword />} />
             <Route path="muahang" element={<ThemDonHangChoUser />} />
+            <Route path="donhang/show" element={<DanhSachDonHangChoUser />} />
+            <Route
+              path="donhang/details/:id"
+              element={<DonHangDetailsCHoUser />}
+            />
           </Route>
           <Route path="/manager" element={<ManagerLayout />}>
             <Route index element={<ThongKe />} />
+            <Route path="donhang">
+              <Route path="show" element={<DanhSachDonHangChoQuanLi />} />
+              <Route path="details/:id" element={<DonHangDetails2 />} />
+            </Route>
             <Route path="users">
               <Route index element={<UserManager />} />
               <Route path="add" element={<AddUser />} />
@@ -70,6 +83,7 @@ function App() {
             <Route path="donhang/:id" element={<DonHangDetails />} />
             <Route path="show" element={<DanhSachDonHang />} />
             <Route path="add" element={<ThemDonHang />} />
+            <Route path="showsp" element={<DanhSachSanPham />} />
           </Route>
         </Route>
         <Route path="/auth">

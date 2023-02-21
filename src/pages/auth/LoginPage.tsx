@@ -1,5 +1,5 @@
 import { useReactiveVar } from "@apollo/client";
-import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { faCoffee, faHome } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
@@ -99,7 +99,7 @@ const LoginPage = (props: Props) => {
         {/* <img className="mx-auto h-16 w-auto" alt="carIT" /> */}
         <FontAwesomeIcon
           className="w-16 h-16 text-indigo-700 mx-auto"
-          icon={faHome}
+          icon={faCoffee}
         />
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Đăng nhập

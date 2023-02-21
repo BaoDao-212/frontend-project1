@@ -270,7 +270,7 @@ const ThemDonHang: FC = () => {
   sanPhams.forEach((sp) => {
     tongtien += sp.sanPham.soTien! * sp.soluong! || 0;
   });
-  const phiship = getValues("phiShip") || 0;
+  const phiship = +getValues("phiShip") || 0;
   tongtien += phiship;
   if (tongtien >= voucher?.minAmount!) {
     tongtien -= voucher?.voucherAmount!;
@@ -290,7 +290,7 @@ const ThemDonHang: FC = () => {
             numberSanPham: tv.soluong!,
           })),
           diaChi: getValues("diaChi") || "",
-          PhiShip: +getValues("phiShip") || 0,
+          PhiShip: +getValues("phiShip"),
           hinhThucMua: getValues("hinhThucMua"),
           codeVoucher: voucher?.codeVoucher! || undefined,
           trangThaiDonHang: TrangThaiDonHang.ChoPheDuyet,
@@ -489,10 +489,22 @@ const ThemDonHang: FC = () => {
                   <span>{tongtien}(VNĐ)</span>
                 </h1>
                 <div className="px-1">
-                  <FormInput2 id="phiShip" labelText="Phí ship" type="text" />
+                  <FormInput2
+                    id="phiShip"
+                    labelText="Phí ship"
+                    type="number"
+                    registerReturn={register("phiShip")}
+                    errorMessage={errors.phiShip?.message}
+                  />
                 </div>
                 <div className="px-1">
-                  <FormInput2 id="diaChi" labelText="Địa chỉ" type="text" />
+                  <FormInput2
+                    id="diaChi"
+                    labelText="Địa chỉ"
+                    type="text"
+                    registerReturn={register("diaChi")}
+                    errorMessage={errors.diaChi?.message}
+                  />
                 </div>
                 <div className="px-1">
                   <SelectInput

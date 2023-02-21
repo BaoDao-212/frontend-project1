@@ -4,7 +4,11 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { userVar } from "../apollo/reactiveVar/loginStatusVar";
 import { VaitroNguoiDung } from "../graphql/generated/schema";
 
-import { MenuAlt1Icon, UserGroupIcon } from "@heroicons/react/outline";
+import {
+  MenuAlt1Icon,
+  MenuAlt3Icon,
+  UserGroupIcon,
+} from "@heroicons/react/outline";
 import {
   BookOpenIcon,
   ChartSquareBarIcon,
@@ -23,9 +27,15 @@ const navigation = [
     current: false,
   },
   {
-    routes: ["/manager/sp"],
+    routes: ["/banhang/showsp"],
     name: "Thực đơn",
     icon: MenuAlt1Icon,
+    current: false,
+  },
+  {
+    routes: ["/banhang/show", RegExp("^/banhang/donhang/*")],
+    name: "Đơn hàng được đặt",
+    icon: MenuAlt3Icon,
     current: false,
   },
   {
